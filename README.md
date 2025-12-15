@@ -1,0 +1,23 @@
+## Descripción
+Sistema web para consulta de calificaciones desarrollado en Django con diseño moderno.
+
+## Características
+- Login con matrícula
+- Dashboard con promedios (Parciales, Global, Final)
+- Tabla de calificaciones por parcial
+- Diseño responsive con Bootstrap 5
+- Paleta de colores azules institucionales
+
+## Instalación
+git clone https://github.com/Paulina-Ramirez/sistema-calificaciones.git
+cd sistema-calificaciones
+python -m venv venv
+
+# Windows:
+venv\Scripts\activate
+
+# Mac/Linux:
+source venv/bin/activate
+
+pip install -r requirements.txt
+python manage.py runserver
