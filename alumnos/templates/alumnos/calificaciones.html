@@ -1,0 +1,388 @@
+{% extends 'alumnos/base.html' %}
+
+{% block title %}Mis Calificaciones{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-lg-4 py-3">
+    
+    <!-- Header con título, subtítulo y botón de salir -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+        <div class="mb-3 mb-md-0">
+            <div class="d-flex align-items-center mb-2">
+                <div class="p-2 rounded me-2" style="background-color: rgba(30, 58, 138, 0.1);">
+                    <i class="bi bi-mortarboard-fill" style="color: var(--primary-blue); font-size: 2rem;"></i>
+                </div>
+                <h1 class="h2 mb-0" style="color: var(--primary-blue); font-weight: 700;">
+                    Sistema Escolar de Calificaciones
+                </h1>
+            </div>
+            <p class="text-muted mb-0 ms-1 fs-5">
+                <i class="bi bi-house-door me-1"></i>Panel del alumno
+            </p>
+        </div>
+        
+        <div class="mt-2 mt-md-0">
+            <a href="{% url 'logout' %}" class="btn fs-5" 
+               style="background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue)); 
+                      color: white; 
+                      padding: 0.75rem 1.5rem;
+                      font-weight: 600;">
+                <i class="bi bi-box-arrow-right me-2 fs-5"></i> Cerrar sesión
+            </a>
+        </div>
+    </div>
+
+    <!-- Información del alumno -->
+    <div class="card mb-4">
+        <div class="card-body p-3 p-md-4">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="p-2 rounded-circle me-3" style="background-color: rgba(30, 58, 138, 0.1);">
+                                <i class="bi bi-person-circle" style="color: var(--primary-blue); font-size: 2.5rem;"></i>
+                            </div>
+                            <div>
+                                <h2 class="h4 mb-1" style="color: var(--primary-blue); font-size: 1.8rem;">{{ alumno.nombre }}</h2>
+                                <p class="text-muted mb-0 fs-5">
+                                    <i></i>Matrícula: {{ alumno.matricula }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TRES PROMEDIOS PRINCIPALES -->
+    <div class="row g-3 mb-4">
+        <!-- Promedio de parciales -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card border-0 h-100" style="border-top: 4px solid var(--primary-blue) !important;">
+                <div class="card-body p-3 p-md-4 text-center">
+                    <div class="mb-3">
+                        <div class="p-3 rounded-circle d-inline-block" style="background-color: rgba(30, 58, 138, 0.1);">
+                            <i class="bi bi-calculator" style="color: var(--primary-blue); font-size: 2.5rem;"></i>
+                        </div>
+                    </div>
+                    <h6 class="text-uppercase text-muted mb-2 fs-5">Promedio Parciales</h6>
+                    <h1 class="display-1 my-3" style="color: var(--primary-blue); font-size: 4.5rem;">{{ promedio_parciales|floatformat:1 }}</h1>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <!-- Promedio global -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 h-100" style="border-top: 4px solid var(--secondary-blue) !important;">
+                <div class="card-body p-3 p-md-4 text-center">
+                    <div class="mb-3">
+                        <div class="p-3 rounded-circle d-inline-block" style="background-color: rgba(59, 130, 246, 0.1);">
+                            <i class="bi bi-person-check" style="color: var(--secondary-blue); font-size: 2.5rem;"></i>
+                        </div>
+                    </div>
+                    <h6 class="text-uppercase text-muted mb-2 fs-5">Promedio Global</h6>
+                    <h1 class="display-1 my-3" style="color: var(--secondary-blue); font-size: 4.5rem;">{{ promedio_profesor|floatformat:1 }}</h1>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <!-- Promedio final -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 h-100" style="border-top: 4px solid {% if promedio_final >= 7.0 %}var(--accent-blue){% else %}#dc2626{% endif %} !important;">
+                <div class="card-body p-3 p-md-4 text-center">
+                    <div class="mb-3">
+                        <div class="p-3 rounded-circle d-inline-block" style="background-color: {% if promedio_final >= 7.0 %}rgba(37, 99, 235, 0.1){% else %}rgba(220, 38, 38, 0.1){% endif %};">
+                            <i class="bi bi-star-fill" style="color: {% if promedio_final >= 7.0 %}var(--accent-blue){% else %}#dc2626{% endif %}; font-size: 2.5rem;"></i>
+                        </div>
+                    </div>
+                    <h6 class="text-uppercase text-muted mb-2 fs-5">Promedio Final</h6>
+                    <h1 class="display-1 my-3" style="color: {% if promedio_final >= 7.0 %}var(--accent-blue){% else %}#dc2626{% endif %}; font-size: 4.5rem;">
+                        {{ promedio_final|floatformat:1 }}
+                    </h1>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tabla de calificaciones -->
+    <div class="card border-0">
+        <div class="card-header" style="background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));">
+            <h4 class="mb-0 text-white fs-3">
+                <i class="bi bi-table me-2"></i>
+                Calificaciones por Parcial
+            </h4>
+        </div>
+        
+        <div class="card-body p-0">
+            {% if materias %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4 fs-5" style="color: var(--primary-blue);">Materia</th>
+                            <th class="text-center fs-5" style="color: var(--primary-blue);">1er Parcial</th>
+                            <th class="text-center fs-5" style="color: var(--primary-blue);">2do Parcial</th>
+                            <th class="text-center fs-5" style="color: var(--primary-blue);">3er Parcial</th>
+                            <th class="text-center pe-4 fs-5" style="color: var(--primary-blue);">Promedio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for materia in materias %}
+                        <tr>
+                            <!-- Materia -->
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2 rounded me-3" style="background-color: rgba(30, 58, 138, 0.08);">
+                                        <i class="bi bi-journal" style="color: var(--primary-blue); font-size: 1.5rem;"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="d-block fs-5" style="color: var(--primary-blue);">{{ materia.nombre }}</strong>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <!-- 1er Parcial -->
+                            <td class="text-center">
+                                {% if materia.parcial1 > 0 %}
+                                <div class="circle-rating-large {% if materia.parcial1 >= 7.0 %}bg-success-blue{% else %}bg-danger{% endif %}">
+                                    <span class="fs-5">{{ materia.parcial1|floatformat:1 }}</span>
+                                </div>
+                                {% else %}
+                                <span class="badge bg-secondary opacity-50 fs-6">-</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- 2do Parcial -->
+                            <td class="text-center">
+                                {% if materia.parcial2 > 0 %}
+                                <div class="circle-rating-large {% if materia.parcial2 >= 7.0 %}bg-info-blue{% else %}bg-danger{% endif %}">
+                                    <span class="fs-5">{{ materia.parcial2|floatformat:1 }}</span>
+                                </div>
+                                {% else %}
+                                <span class="badge bg-secondary opacity-50 fs-6">-</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- 3er Parcial -->
+                            <td class="text-center">
+                                {% if materia.parcial3 > 0 %}
+                                <div class="circle-rating-large {% if materia.parcial3 >= 7.0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                    <span class="fs-5">{{ materia.parcial3|floatformat:1 }}</span>
+                                </div>
+                                {% else %}
+                                <span class="badge bg-secondary opacity-50 fs-6">-</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Promedio de la materia -->
+                            <td class="text-center pe-4">
+                                <div class="d-flex flex-column align-items-center">
+                                    {% if materia.promedio >= 7.0 %}
+                                    <span class="badge fw-bold px-3 py-2 fs-5" style="background-color: var(--accent-blue); color: white;">
+                                        {{ materia.promedio|floatformat:1 }}
+                                    </span>
+                                    {% else %}
+                                    <span class="badge fw-bold px-3 py-2 fs-5" style="background-color: #dc2626; color: white;">
+                                        {{ materia.promedio|floatformat:1 }}
+                                    </span>
+                                    {% endif %}
+                                    <small class="text-muted mt-1 fs-6">/10</small>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Promedios por parcial -->
+            <div class="row g-0 border-top">
+                <div class="col-md-4">
+                    <div class="p-3 p-md-4 text-center border-end" style="border-color: #e2e8f0 !important;">
+                        <h6 class="text-muted mb-2 fs-5">Prom. 1er Parcial</h6>
+                        <h2 class="fw-bold mb-0" style="color: var(--primary-blue); font-size: 2.5rem;">{{ promedio_p1|floatformat:1 }}</h2>
+                        
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="p-3 p-md-4 text-center border-end" style="border-color: #e2e8f0 !important;">
+                        <h6 class="text-muted mb-2 fs-5">Prom. 2do Parcial</h6>
+                        <h2 class="fw-bold mb-0" style="color: var(--secondary-blue); font-size: 2.5rem;">{{ promedio_p2|floatformat:1 }}</h2>
+                        
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="p-3 p-md-4 text-center">
+                        <h6 class="text-muted mb-2 fs-5">Prom. 3er Parcial</h6>
+                        <h2 class="fw-bold mb-0" style="color: var(--accent-blue); font-size: 2.5rem;">{{ promedio_p3|floatformat:1 }}</h2>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            {% else %}
+            <!-- Estado vacío -->
+            <div class="text-center py-5 my-3">
+                <div class="mb-4">
+                    <i class="bi bi-journal-x" style="color: #cbd5e1; font-size: 5rem;"></i>
+                </div>
+                <h3 class="text-muted mb-2 fs-3">No hay calificaciones registradas</h3>
+                <p class="text-muted mb-4 fs-5">Las calificaciones aparecerán aquí una vez que sean cargadas.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Pie de página -->
+    <footer class="mt-4 pt-3 border-top">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="text-muted mb-0 fs-5">
+                    <i></i>
+                    Sistema de calificaciones © {{ alumno.fecha_registro|date:"Y" }}
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="text-muted mb-0 fs-5">
+                    {% now "j/m/Y H:i" %}
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+</div>
+
+<!-- Estilos adicionales para esta página -->
+<style>
+    .circle-rating-large {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        margin: 0 auto;
+    }
+    
+    .bg-success-blue {
+        background-color: var(--success-blue) !important;
+    }
+    
+    .bg-info-blue {
+        background-color: var(--info-blue) !important;
+    }
+    
+    .bg-warning {
+        background-color: #f59e0b !important;
+    }
+    
+    .bg-danger {
+        background-color: #dc2626 !important;
+    }
+    
+    /* Aumentar tamaño de fuente general para la tabla */
+    .table td, .table th {
+        font-size: 1.1rem;
+    }
+    
+    /* Mejorar visibilidad del botón de cerrar sesión */
+    .btn-logout {
+        font-size: 1.1rem !important;
+        padding: 0.8rem 1.8rem !important;
+    }
+    
+    @media (max-width: 768px) {
+        .circle-rating-large {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .display-1 {
+            font-size: 3.5rem !important;
+        }
+        
+        h1, .h1 {
+            font-size: 2rem !important;
+        }
+        
+        h2, .h2 {
+            font-size: 1.75rem !important;
+        }
+        
+        h3, .h3 {
+            font-size: 1.5rem !important;
+        }
+        
+        .fs-5 {
+            font-size: 1rem !important;
+        }
+        
+        .fs-6 {
+            font-size: 0.9rem !important;
+        }
+        
+    }
+    
+    @media (max-width: 576px) {
+        .display-1 {
+            font-size: 3rem !important;
+        }
+        
+        .circle-rating-large {
+            width: 45px;
+            height: 45px;
+        }
+        
+        .badge.fs-5 {
+            font-size: 0.9rem !important;
+            padding: 0.5rem 0.8rem !important;
+        }
+    }
+    
+    .border-end {
+        border-right: 1px solid #e2e8f0 !important;
+    }
+</style>
+
+<script>
+    // Mejorar accesibilidad y UX
+    document.addEventListener('DOMContentLoaded', function() {
+        // Añadir tooltips a los círculos de calificación
+        document.querySelectorAll('.circle-rating-large').forEach(circle => {
+            const score = circle.textContent.trim();
+            circle.setAttribute('title', `Calificación: ${score}`);
+            circle.setAttribute('data-bs-toggle', 'tooltip');
+            circle.setAttribute('data-bs-placement', 'top');
+        });
+        
+        // Inicializar tooltips de Bootstrap
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Efecto hover en las filas de la tabla
+        const tableRows = document.querySelectorAll('tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.01)';
+                this.style.boxShadow = '0 5px 15px rgba(30, 58, 138, 0.1)';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+    });
+</script>
+{% endblock %}

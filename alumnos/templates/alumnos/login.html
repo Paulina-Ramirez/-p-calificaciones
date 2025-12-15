@@ -1,0 +1,536 @@
+{% extends 'alumnos/base.html' %}
+
+{% block title %}Acceso al Sistema Escolar{% endblock %}
+
+{% block content %}
+<style>
+    /* Reset y configuración base */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    /* Body centrado vertical y horizontalmente */
+    body {
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        color: #1e293b;
+        width: 100%;
+    }
+    
+    /* Contenedor principal CENTRADO */
+    .login-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        width: 100%;
+    }
+    
+    .login-container {
+        width: 100%;
+        max-width: 480px;
+        animation: fadeIn 0.8s ease-out;
+        margin: 0 auto;
+    }
+    
+    /* Tarjeta de login - MÁS GRANDE */
+    .login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 50px rgba(30, 58, 138, 0.2);
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* Header institucional - TEXTO MÁS GRANDE */
+    .institution-header {
+        background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+        padding: 3rem 2.5rem;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+    
+    .institution-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .logo-icon {
+        font-size: 3.5rem;
+        filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));
+    }
+    
+    .institution-name h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .institution-name p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        font-weight: 400;
+    }
+    
+    /* Formulario - TEXTO MÁS GRANDE */
+    .login-form {
+        padding: 3rem 2.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .form-label {
+        display: block;
+        color: var(--primary-blue);
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 1.2rem 1.5rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        background: #f8fafc;
+        color: #334155;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .form-input::placeholder {
+        color: #94a3b8;
+        font-size: 1rem;
+    }
+    
+    /* Botón principal - MÁS GRANDE */
+    .login-button {
+        width: 100%;
+        padding: 1.2rem;
+        background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 0.75rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    
+    .login-button:hover {
+        background: linear-gradient(135deg, var(--accent-blue), var(--dark-blue));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+    
+    /* Enlaces de ayuda - TEXTO MÁS GRANDE */
+    .help-links {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .help-link {
+        display: block;
+        color: var(--secondary-blue);
+        text-decoration: none;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        transition: color 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .help-link:hover {
+        color: var(--accent-blue);
+        text-decoration: underline;
+    }
+    
+    /* Nota legal - TEXTO MÁS GRANDE */
+    .legal-notice {
+        background: #f8fafc;
+        padding: 2rem;
+        text-align: center;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .notice-title {
+        color: var(--primary-blue);
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .notice-text {
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Footer - TEXTO MÁS GRANDE */
+    .login-footer {
+        text-align: center;
+        padding: 2rem;
+        color: #64748b;
+        font-size: 0.9rem;
+        border-top: 1px solid #e2e8f0;
+        background: #f8fafc;
+    }
+    
+    .copyright {
+        font-size: 0.85rem;
+        opacity: 0.8;
+        margin-top: 0.75rem;
+    }
+    
+    /* Mensajes de error - MÁS GRANDE */
+    .error-message {
+        background: linear-gradient(135deg, #fee, #fdd);
+        border: 1px solid rgba(220, 38, 38, 0.2);
+        border-radius: 10px;
+        padding: 1.2rem 1.5rem;
+        margin-bottom: 1.5rem;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: shake 0.5s ease-in-out;
+        font-size: 1rem;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    /* Animaciones */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 576px) {
+        .login-wrapper {
+            padding: 15px;
+        }
+        
+        .login-container {
+            max-width: 100%;
+        }
+        
+        .institution-header {
+            padding: 2.5rem 2rem;
+        }
+        
+        .login-form {
+            padding: 2.5rem 2rem;
+        }
+        
+        .institution-name h1 {
+            font-size: 1.7rem;
+        }
+        
+        .institution-name p {
+            font-size: 1rem;
+        }
+        
+        .logo-icon {
+            font-size: 3rem;
+        }
+        
+        .form-input {
+            padding: 1.1rem 1.3rem;
+            font-size: 1.05rem;
+        }
+        
+        .login-button {
+            padding: 1.1rem;
+            font-size: 1.05rem;
+        }
+    }
+    
+    /* Para pantallas grandes */
+    @media (min-width: 1200px) {
+        .login-container {
+            max-width: 520px;
+        }
+        
+        .institution-name h1 {
+            font-size: 2.2rem;
+        }
+        
+        .form-input {
+            font-size: 1.15rem;
+            padding: 1.3rem 1.7rem;
+        }
+    }
+    
+    /* Efectos decorativos */
+    .accent-line {
+        height: 5px;
+        background: linear-gradient(90deg, var(--secondary-blue), var(--accent-blue));
+        width: 70px;
+        margin: 1rem auto 2rem;
+        border-radius: 3px;
+    }
+    
+    /* Indicador de accesibilidad */
+    .accessibility-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    /* Asegurar centrado perfecto */
+    html {
+        height: 100%;
+        width: 100%;
+    }
+    
+    body {
+        height: 100%;
+        width: 100%;
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header institucional -->
+            <div class="institution-header">
+                
+                <div class="institution-logo">
+                    <i class="bi bi-mortarboard-fill logo-icon"></i>
+                </div>
+                <div class="institution-name">
+                    <h1>Consulta de Calificaciones</h1>
+                </div>
+                <p style="font-size: 1rem; opacity: 0.9;">Ingresa con tu matrícula</p>
+            </div>
+            
+            <!-- Formulario -->
+            <div class="login-form">
+                <form method="POST" id="loginForm">
+                    {% csrf_token %}
+                    
+                    <!-- Campo de matrícula -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-person-badge me-1"></i>
+                            Matrícula
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-input" 
+                            name="matricula"
+                            placeholder="Ingresa tu número de matrícula"
+                            required
+                            autofocus
+                            autocomplete="off"
+                            id="matriculaInput"
+                        >
+                    </div>
+                    
+                    <!-- Campo de contraseña (si decides agregarlo después) -->
+                    <!--
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-lock me-1"></i>
+                            Contraseña
+                        </label>
+                        <input 
+                            type="password" 
+                            class="form-input" 
+                            name="password"
+                            placeholder="Ingresa tu contraseña"
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
+                    -->
+                    
+                    {% if error %}
+                    <div class="error-message" id="errorMessage">
+                        <i class="bi bi-exclamation-octagon-fill"></i>
+                        <div>{{ error }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Botón de ingreso -->
+                    <button type="submit" class="login-button" id="submitBtn">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Ingresar
+                    </button>
+                </form>
+                
+            </div>
+            
+            
+            <!-- Footer -->
+            <div class="login-footer">
+                <div style="margin-bottom: 0.75rem; font-size: 1rem;">
+                    <i></i>
+                    Sistema Escolar de Calificaciones
+                </div>
+                <div class="copyright">
+                    © {% now "Y" %} Todos los derechos reservados.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Efectos interactivos
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const matriculaInput = document.getElementById('matriculaInput');
+        
+        // Efecto de foco en inputs
+        matriculaInput.addEventListener('focus', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+        
+        matriculaInput.addEventListener('blur', function() {
+            this.style.transform = 'scale(1)';
+        });
+        
+        // Efecto de carga en el botón
+        form.addEventListener('submit', function(e) {
+            if (!submitBtn.disabled) {
+                // Deshabilitar botón
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Verificando...';
+                submitBtn.style.opacity = '0.8';
+                
+                // Eliminar mensaje de error si existe
+                const errorMsg = document.getElementById('errorMessage');
+                if (errorMsg) {
+                    errorMsg.style.animation = 'fadeOut 0.3s ease forwards';
+                    setTimeout(() => {
+                        if (errorMsg.parentNode) {
+                            errorMsg.parentNode.removeChild(errorMsg);
+                        }
+                    }, 300);
+                }
+            }
+        });
+        
+        // Auto-seleccionar texto en el input
+        matriculaInput.addEventListener('click', function() {
+            this.select();
+        });
+        
+        // Validación visual en tiempo real
+        matriculaInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length > 0) {
+                this.style.borderColor = 'var(--secondary-blue)';
+                this.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)';
+            } else {
+                this.style.borderColor = '#e2e8f0';
+                this.style.boxShadow = 'none';
+            }
+        });
+        
+        // Animación de aparición para los elementos
+        const formGroups = document.querySelectorAll('.form-group');
+        formGroups.forEach((group, index) => {
+            group.style.animationDelay = `${index * 0.1}s`;
+            group.style.opacity = '0';
+            group.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                group.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                group.style.opacity = '1';
+                group.style.transform = 'translateY(0)';
+            }, 100 + (index * 100));
+        });
+    });
+    
+    // Estilo para spinner
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Asegurar centrado perfecto */
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Mejora de accesibilidad */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}
