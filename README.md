@@ -11,17 +11,17 @@ Sistema web para consulta de calificaciones desarrollado en Django con diseño m
 ## Instalación
 - git clone https://github.com/Paulina-Ramirez/sistema-calificaciones.git
 
-# Entra a la carpeta del proyecto
+## Entra a la carpeta del proyecto
 - cd sistema-calificaciones
 
 ## Crear entorno virtual
-REM 4. python -m venv venv
+### REM 4. python -m venv venv
 
-REM 3. Activar entorno virtual:      
+### REM 3. Activar entorno virtual:      
 venv\Scripts\activate
 
-REM 4. Instalar dependencias:      
+### REM 4. Instalar dependencias:      
 pip install -r requirements.txt
 
-REM 5. Ejecutar servidor Django:     
+### REM 5. Ejecutar servidor Django:     
 python manage.py runserver
