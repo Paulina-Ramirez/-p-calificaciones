@@ -9,15 +9,12 @@ Sistema web para consulta de calificaciones desarrollado en Django con diseño m
 - Paleta de colores azules institucionales
 
 ## Instalación
-git clone https://github.com/Paulina-Ramirez/sistema-calificaciones.git
-cd sistema-calificaciones
-python -m venv venv
+- git clone https://github.com/Paulina-Ramirez/sistema-calificaciones.git
+- cd sistema-calificaciones
+- python -m venv venv
 
 # Windows:
 venv\Scripts\activate
 
-# Mac/Linux:
-source venv/bin/activate
-
-pip install -r requirements.txt
-python manage.py runserver
+- pip install -r requirements.txt
+- python manage.py runserver
