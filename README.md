@@ -23,7 +23,7 @@ venv\Scripts\activate
 ### REM 4. Instalar dependencias:      
 pip install -r requirements.txt
 
-### REM 5. Migrar los cambios 
+### REM 6. Migrar los cambios 
 python manage.py makemigrations                             
 python manage.py migrate 
 
