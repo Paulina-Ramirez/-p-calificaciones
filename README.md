@@ -24,8 +24,7 @@ venv\Scripts\activate
 pip install -r requirements.txt
 
 ### REM 5. Migrar los cambios 
-python manage.py makemigrations 
-#######
+python manage.py makemigrations                             
 python manage.py migrate 
 
 ### REM 5. Ejecutar servidor Django:     
