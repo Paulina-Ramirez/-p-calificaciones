@@ -1,388 +1,1017 @@
 {% extends 'alumnos/base.html' %}
+{% load static %}
 
-{% block title %}Mis Calificaciones{% endblock %}
+{% block title %}Mis Calificaciones - CSEIO{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-3 px-lg-4 py-3">
-    
-    <!-- Header con título, subtítulo y botón de salir -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-        <div class="mb-3 mb-md-0">
-            <div class="d-flex align-items-center mb-2">
-                <div class="p-2 rounded me-2" style="background-color: rgba(30, 58, 138, 0.1);">
-                    <i class="bi bi-mortarboard-fill" style="color: var(--primary-blue); font-size: 2rem;"></i>
-                </div>
-                <h1 class="h2 mb-0" style="color: var(--primary-blue); font-weight: 700;">
-                    Sistema Escolar de Calificaciones
-                </h1>
-            </div>
-            <p class="text-muted mb-0 ms-1 fs-5">
-                <i class="bi bi-house-door me-1"></i>Panel del alumno
-            </p>
-        </div>
-        
-        <div class="mt-2 mt-md-0">
-            <a href="{% url 'logout' %}" class="btn fs-5" 
-               style="background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue)); 
-                      color: white; 
-                      padding: 0.75rem 1.5rem;
-                      font-weight: 600;">
-                <i class="bi bi-box-arrow-right me-2 fs-5"></i> Cerrar sesión
-            </a>
-        </div>
-    </div>
-
-    <!-- Información del alumno -->
-    <div class="card mb-4">
-        <div class="card-body p-3 p-md-4">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center">
-                            <div class="p-2 rounded-circle me-3" style="background-color: rgba(30, 58, 138, 0.1);">
-                                <i class="bi bi-person-circle" style="color: var(--primary-blue); font-size: 2.5rem;"></i>
-                            </div>
-                            <div>
-                                <h2 class="h4 mb-1" style="color: var(--primary-blue); font-size: 1.8rem;">{{ alumno.nombre }}</h2>
-                                <p class="text-muted mb-0 fs-5">
-                                    <i></i>Matrícula: {{ alumno.matricula }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- TRES PROMEDIOS PRINCIPALES -->
-    <div class="row g-3 mb-4">
-        <!-- Promedio de parciales -->
-        <div class="col-lg-4 col-md-12">
-            <div class="card border-0 h-100" style="border-top: 4px solid var(--primary-blue) !important;">
-                <div class="card-body p-3 p-md-4 text-center">
-                    <div class="mb-3">
-                        <div class="p-3 rounded-circle d-inline-block" style="background-color: rgba(30, 58, 138, 0.1);">
-                            <i class="bi bi-calculator" style="color: var(--primary-blue); font-size: 2.5rem;"></i>
-                        </div>
-                    </div>
-                    <h6 class="text-uppercase text-muted mb-2 fs-5">Promedio Parciales</h6>
-                    <h1 class="display-1 my-3" style="color: var(--primary-blue); font-size: 4.5rem;">{{ promedio_parciales|floatformat:1 }}</h1>
-                    
-                </div>
-            </div>
-        </div>
-        
-        <!-- Promedio global -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card border-0 h-100" style="border-top: 4px solid var(--secondary-blue) !important;">
-                <div class="card-body p-3 p-md-4 text-center">
-                    <div class="mb-3">
-                        <div class="p-3 rounded-circle d-inline-block" style="background-color: rgba(59, 130, 246, 0.1);">
-                            <i class="bi bi-person-check" style="color: var(--secondary-blue); font-size: 2.5rem;"></i>
-                        </div>
-                    </div>
-                    <h6 class="text-uppercase text-muted mb-2 fs-5">Promedio Global</h6>
-                    <h1 class="display-1 my-3" style="color: var(--secondary-blue); font-size: 4.5rem;">{{ promedio_profesor|floatformat:1 }}</h1>
-                    
-                </div>
-            </div>
-        </div>
-        
-        <!-- Promedio final -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card border-0 h-100" style="border-top: 4px solid {% if promedio_final >= 7.0 %}var(--accent-blue){% else %}#dc2626{% endif %} !important;">
-                <div class="card-body p-3 p-md-4 text-center">
-                    <div class="mb-3">
-                        <div class="p-3 rounded-circle d-inline-block" style="background-color: {% if promedio_final >= 7.0 %}rgba(37, 99, 235, 0.1){% else %}rgba(220, 38, 38, 0.1){% endif %};">
-                            <i class="bi bi-star-fill" style="color: {% if promedio_final >= 7.0 %}var(--accent-blue){% else %}#dc2626{% endif %}; font-size: 2.5rem;"></i>
-                        </div>
-                    </div>
-                    <h6 class="text-uppercase text-muted mb-2 fs-5">Promedio Final</h6>
-                    <h1 class="display-1 my-3" style="color: {% if promedio_final >= 7.0 %}var(--accent-blue){% else %}#dc2626{% endif %}; font-size: 4.5rem;">
-                        {{ promedio_final|floatformat:1 }}
-                    </h1>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Tabla de calificaciones -->
-    <div class="card border-0">
-        <div class="card-header" style="background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));">
-            <h4 class="mb-0 text-white fs-3">
-                <i class="bi bi-table me-2"></i>
-                Calificaciones por Parcial
-            </h4>
-        </div>
-        
-        <div class="card-body p-0">
-            {% if materias %}
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4 fs-5" style="color: var(--primary-blue);">Materia</th>
-                            <th class="text-center fs-5" style="color: var(--primary-blue);">1er Parcial</th>
-                            <th class="text-center fs-5" style="color: var(--primary-blue);">2do Parcial</th>
-                            <th class="text-center fs-5" style="color: var(--primary-blue);">3er Parcial</th>
-                            <th class="text-center pe-4 fs-5" style="color: var(--primary-blue);">Promedio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for materia in materias %}
-                        <tr>
-                            <!-- Materia -->
-                            <td class="ps-4">
-                                <div class="d-flex align-items-center">
-                                    <div class="p-2 rounded me-3" style="background-color: rgba(30, 58, 138, 0.08);">
-                                        <i class="bi bi-journal" style="color: var(--primary-blue); font-size: 1.5rem;"></i>
-                                    </div>
-                                    <div>
-                                        <strong class="d-block fs-5" style="color: var(--primary-blue);">{{ materia.nombre }}</strong>
-                                    </div>
-                                </div>
-                            </td>
-                            
-                            <!-- 1er Parcial -->
-                            <td class="text-center">
-                                {% if materia.parcial1 > 0 %}
-                                <div class="circle-rating-large {% if materia.parcial1 >= 7.0 %}bg-success-blue{% else %}bg-danger{% endif %}">
-                                    <span class="fs-5">{{ materia.parcial1|floatformat:1 }}</span>
-                                </div>
-                                {% else %}
-                                <span class="badge bg-secondary opacity-50 fs-6">-</span>
-                                {% endif %}
-                            </td>
-                            
-                            <!-- 2do Parcial -->
-                            <td class="text-center">
-                                {% if materia.parcial2 > 0 %}
-                                <div class="circle-rating-large {% if materia.parcial2 >= 7.0 %}bg-info-blue{% else %}bg-danger{% endif %}">
-                                    <span class="fs-5">{{ materia.parcial2|floatformat:1 }}</span>
-                                </div>
-                                {% else %}
-                                <span class="badge bg-secondary opacity-50 fs-6">-</span>
-                                {% endif %}
-                            </td>
-                            
-                            <!-- 3er Parcial -->
-                            <td class="text-center">
-                                {% if materia.parcial3 > 0 %}
-                                <div class="circle-rating-large {% if materia.parcial3 >= 7.0 %}bg-warning{% else %}bg-danger{% endif %}">
-                                    <span class="fs-5">{{ materia.parcial3|floatformat:1 }}</span>
-                                </div>
-                                {% else %}
-                                <span class="badge bg-secondary opacity-50 fs-6">-</span>
-                                {% endif %}
-                            </td>
-                            
-                            <!-- Promedio de la materia -->
-                            <td class="text-center pe-4">
-                                <div class="d-flex flex-column align-items-center">
-                                    {% if materia.promedio >= 7.0 %}
-                                    <span class="badge fw-bold px-3 py-2 fs-5" style="background-color: var(--accent-blue); color: white;">
-                                        {{ materia.promedio|floatformat:1 }}
-                                    </span>
-                                    {% else %}
-                                    <span class="badge fw-bold px-3 py-2 fs-5" style="background-color: #dc2626; color: white;">
-                                        {{ materia.promedio|floatformat:1 }}
-                                    </span>
-                                    {% endif %}
-                                    <small class="text-muted mt-1 fs-6">/10</small>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Promedios por parcial -->
-            <div class="row g-0 border-top">
-                <div class="col-md-4">
-                    <div class="p-3 p-md-4 text-center border-end" style="border-color: #e2e8f0 !important;">
-                        <h6 class="text-muted mb-2 fs-5">Prom. 1er Parcial</h6>
-                        <h2 class="fw-bold mb-0" style="color: var(--primary-blue); font-size: 2.5rem;">{{ promedio_p1|floatformat:1 }}</h2>
-                        
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="p-3 p-md-4 text-center border-end" style="border-color: #e2e8f0 !important;">
-                        <h6 class="text-muted mb-2 fs-5">Prom. 2do Parcial</h6>
-                        <h2 class="fw-bold mb-0" style="color: var(--secondary-blue); font-size: 2.5rem;">{{ promedio_p2|floatformat:1 }}</h2>
-                        
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="p-3 p-md-4 text-center">
-                        <h6 class="text-muted mb-2 fs-5">Prom. 3er Parcial</h6>
-                        <h2 class="fw-bold mb-0" style="color: var(--accent-blue); font-size: 2.5rem;">{{ promedio_p3|floatformat:1 }}</h2>
-                        
-                    </div>
-                </div>
-            </div>
-            
-            {% else %}
-            <!-- Estado vacío -->
-            <div class="text-center py-5 my-3">
-                <div class="mb-4">
-                    <i class="bi bi-journal-x" style="color: #cbd5e1; font-size: 5rem;"></i>
-                </div>
-                <h3 class="text-muted mb-2 fs-3">No hay calificaciones registradas</h3>
-                <p class="text-muted mb-4 fs-5">Las calificaciones aparecerán aquí una vez que sean cargadas.</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    
-    <!-- Pie de página -->
-    <footer class="mt-4 pt-3 border-top">
-        <div class="row">
-            <div class="col-md-6">
-                <p class="text-muted mb-0 fs-5">
-                    <i></i>
-                    Sistema de calificaciones © {{ alumno.fecha_registro|date:"Y" }}
-                </p>
-            </div>
-            <div class="col-md-6 text-md-end">
-                <p class="text-muted mb-0 fs-5">
-                    {% now "j/m/Y H:i" %}
-                </p>
-            </div>
-        </div>
-    </footer>
-    
-</div>
-
-<!-- Estilos adicionales para esta página -->
 <style>
-    .circle-rating-large {
+    :root {
+        /* Paleta azul profesional con tonos sutiles */
+        --primary-blue: #1d4ed8;         /* Azul principal */
+        --dark-blue: #1e3a8a;            /* Azul oscuro */
+        --medium-blue: #3b82f6;          /* Azul medio */
+        --light-blue: #60a5fa;           /* Azul claro */
+        --pale-blue: #dbeafe;            /* Azul muy claro */
+        --accent-blue: #0ea5e9;          /* Azul acento */
+        --subtle-blue: #eff6ff;          /* Azul súper sutil para fondos */
+        
+        /* Grises neutros */
+        --dark-gray: #111827;            /* Gris oscuro */
+        --medium-gray: #6b7280;          /* Gris medio */
+        --light-gray: #f3f4f6;           /* Gris claro para fondos */
+        --white: #ffffff;                /* Blanco */
+        
+        /* Colores para estados */
+        --success-green: #059669;        /* Verde éxito */
+        --error-red: #dc2626;            /* Rojo error */
+        
+        /* Sombras y efectos */
+        --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 35px rgba(0, 0, 0, 0.15);
+        --shadow-blue: 0 6px 25px rgba(29, 78, 216, 0.1);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Fondo con tono azul muy sutil */
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 30%, #f8fafc 100%) !important;
+        min-height: 100vh;
+        position: relative;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Contenedor principal */
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 70px 40px 50px;
+    }
+    
+    /* Sección de información del alumno - CON TONOS AZULES SUTILES */
+    .student-info-section {
+        margin-bottom: 60px;
+    }
+    
+    .student-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: var(--shadow-md);
+        border: 2px solid var(--light-blue); /* Borde azul sutil */
+        transition: var(--transition);
+    }
+    
+    .student-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-3px);
+        border-color: var(--medium-blue);
+    }
+    
+    .student-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2.5rem;
+    }
+    
+    .student-identity {
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+    }
+    
+    /* Logo del colegio con efecto azul sutil */
+    .student-logo {
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 15px;
+        transition: var(--transition);
+        background: var(--white);
+        border-radius: 18px;
+        box-shadow: 0 4px 15px rgba(29, 78, 216, 0.1);
+        border: 2px solid var(--pale-blue);
+    }
+    
+    .student-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .student-logo:hover {
+        transform: scale(1.05);
+        border-color: var(--light-blue);
+        box-shadow: 0 6px 20px rgba(29, 78, 216, 0.15);
+    }
+    
+    .student-details {
+        flex: 1;
+    }
+    
+    .student-name {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--dark-blue); /* Color azul oscuro */
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+    }
+    
+    /* Matrícula con tono azul sutil */
+    .student-matricula {
+        color: var(--primary-blue);
+        font-size: 1.15rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 0;
+        width: fit-content;
+    }
+    
+    /* Información de institución con detalles azules */
+    .institution-info {
+        padding-top: 1.5rem;
+        border-top: 2px solid var(--pale-blue); /* Línea azul sutil */
+        position: relative;
+        padding-left: 1rem;
+    }
+    
+    .institution-info::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 1.5rem;
+        bottom: 0;
+        width: 4px;
+        border-radius: 2px;
+    }
+    
+    .institution-name {
+        color: var(--dark-blue); /* Azul oscuro */
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .institution-program {
+        color: var(--medium-blue); /* Azul medio */
+        font-size: 1rem;
+    }
+    
+    /* Botón de cerrar sesión - con azul sutil */
+    .logout-btn {
+        background: var(--white);
+        color: var(--light-blue);
+        border: 2px solid var(--light-blue);
+        padding: 0.9rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        transition: var(--transition);
+        background: linear-gradient(to bottom, var(--white), var(--subtle-blue));
+    }
+    
+    .logout-btn:hover {
+        background: linear-gradient(to bottom, var(--dark-blue), var(--dark-gray));
+        color: var(--white);
+        border-color: var(--medium-blue);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(29, 78, 216, 0.15);
+    }
+    
+    /* Tarjetas de promedio - CON TONOS AZULES SUTILES */
+    .promedios-section {
+        margin-bottom: 60px;
+    }
+    
+    .promedio-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        box-shadow: var(--shadow-md);
+        border: 2px solid var(--pale-blue); /* Borde azul muy sutil */
+        transition: var(--transition);
+        height: 100%;
+        position: relative;
+        text-align: center;
+    }
+    
+    .promedio-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--light-blue);
+    }
+    
+    /* Promedio final con más azul sutil */
+    .promedio-card.final-card {
+        background: linear-gradient(to bottom, var(--subtle-blue), var(--pale-blue));
+        border: 3px solid var(--medium-blue);
+        box-shadow: var(--shadow-blue);
+    }
+    
+    .promedio-card.final-card:hover {
+        box-shadow: 0 12px 35px rgba(29, 78, 216, 0.15);
+        transform: translateY(-5px);
+        background: linear-gradient(to bottom, var(--subtle-blue), var(--light-blue));
+    }
+    
+    .promedio-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem auto;
+        font-size: 2rem;
+        background: linear-gradient(135deg, var(--white), var(--subtle-blue));
+        color: var(--primary-blue);
+        border: 2px solid var(--pale-blue);
+        transition: var(--transition);
+    }
+    
+    .promedio-card:hover .promedio-icon {
+        transform: scale(1.1);
+        border-color: var(--light-blue);
+        box-shadow: 0 4px 15px rgba(29, 78, 216, 0.1);
+    }
+    
+    /* Icono del promedio final con más azul */
+    .promedio-card.final-card .promedio-icon {
+        background: linear-gradient(135deg, var(--light-blue), var(--medium-blue));
+        color: var(--white);
+    }
+    
+    .promedio-value {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1;
+        margin: 1.2rem 0;
+        color: var(--dark-gray);
+        font-family: 'Inter', sans-serif;
+        letter-spacing: -1.5px;
+    }
+    
+    /* Valor del promedio final en azul */
+    .promedio-card.final-card .promedio-value {
+        color: var(--dark-blue);
+    }
+    
+    .promedio-label {
+        color: var(--dark-blue); /* Azul oscuro */
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.7rem;
+    }
+    
+    /* TABLA DE CALIFICACIONES - MÁS BLANCA */
+    .calificaciones-section {
+        margin-top: 50px;
+    }
+    
+    .calificaciones-card {
+        background: var(--white);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        border: 2px solid var(--light-blue); /* Borde azul sutil */
+        transition: var(--transition);
+    }
+    
+    .calificaciones-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-3px);
+    }
+    
+    .calificaciones-header {
+        background: var(--white);
+        padding: 2rem 2.5rem;
+        border-bottom: 1px solid var(--light-gray);
+        position: relative;
+    }
+    
+    .calificaciones-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 100%;
+        background: var(--primary-blue);
+    }
+    
+    .calificaciones-header h3 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--dark-blue); /* Azul oscuro */
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .calificaciones-header h3 i {
+        color: var(--primary-blue);
+        font-size: 1.8rem;
+    }
+    
+    /* Tabla MÁS BLANCA - sin fondos azules */
+    .calificaciones-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: var(--white);
+    }
+    
+    .calificaciones-table thead {
+        background: var(--white); /* Fondo blanco puro */
+    }
+    
+    .calificaciones-table th {
+        padding: 1.5rem 2rem;
+        color: var(--dark-blue); /* Azul oscuro */
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        border-bottom: 2px solid var(--light-blue); /* Línea azul */
+        font-size: 0.95rem;
+        white-space: nowrap;
+        position: relative;
+    }
+    
+    .calificaciones-table th:not(:first-child)::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 20%;
+        height: 60%;
+        width: 1px;
+        background: var(--light-gray); /* Línea gris sutil */
+    }
+    
+    .calificaciones-table td {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--light-gray);
+        vertical-align: middle;
+        transition: var(--transition);
+        background: var(--white); /* Fondo blanco puro */
+    }
+    
+    .calificaciones-table tbody tr {
+        transition: var(--transition);
+        background: var(--white); /* Fondo blanco puro */
+    }
+    
+    .calificaciones-table tbody tr:hover {
+        background: var(--subtle-blue); /* Solo en hover un azul muy sutil */
+    }
+    
+    /* Diseño para las materias */
+    .materia-cell {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .materia-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        background: var(--white);
+        color: var(--primary-blue);
+        border: 2px solid var(--pale-blue);
+        transition: var(--transition);
+    }
+    
+    .calificaciones-table tbody tr:hover .materia-icon {
+        background: linear-gradient(135deg, var(--light-blue), var(--medium-blue));
+        color: var(--white);
+        transform: rotate(5deg);
+        border-color: var(--medium-blue);
+    }
+    
+    .materia-nombre {
+        font-weight: 600;
+        color: var(--dark-gray);
+        font-size: 1.05rem;
+        transition: var(--transition);
+    }
+    
+    .calificaciones-table tbody tr:hover .materia-nombre {
+        color: var(--primary-blue);
+    }
+    
+    /* Calificaciones circulares */
+    .calificacion-circle {
         width: 60px;
         height: 60px;
         border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+        margin: 0 auto;
+        transition: var(--transition);
+        border: 2px solid transparent;
+        background: var(--white);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .calificacion-circle.aprobado {
+        color: var(--success-green);
+        border-color: var(--success-green);
+        background: var(--white);
+    }
+    
+    .calificacion-circle.reprobado {
+        color: var(--error-red);
+        border-color: var(--error-red);
+        background: var(--white);
+    }
+    
+    .calificacion-circle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .calificacion-circle.aprobado:hover {
+        background: rgba(5, 150, 105, 0.05);
+    }
+    
+    .calificacion-circle.reprobado:hover {
+        background: rgba(220, 38, 38, 0.05);
+    }
+    
+    /* Promedio de materia */
+    .promedio-materia {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-weight: 600;
-        margin: 0 auto;
-    }
-    
-    .bg-success-blue {
-        background-color: var(--success-blue) !important;
-    }
-    
-    .bg-info-blue {
-        background-color: var(--info-blue) !important;
-    }
-    
-    .bg-warning {
-        background-color: #f59e0b !important;
-    }
-    
-    .bg-danger {
-        background-color: #dc2626 !important;
-    }
-    
-    /* Aumentar tamaño de fuente general para la tabla */
-    .table td, .table th {
+        padding: 0.7rem 1.3rem;
+        border-radius: 10px;
+        font-weight: 700;
         font-size: 1.1rem;
+        min-width: 80px;
+        transition: var(--transition);
+        border: 2px solid transparent;
+        background: var(--white);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
     }
     
-    /* Mejorar visibilidad del botón de cerrar sesión */
-    .btn-logout {
-        font-size: 1.1rem !important;
-        padding: 0.8rem 1.8rem !important;
+    .promedio-materia.aprobado {
+        color: var(--success-green);
+        border-color: var(--success-green);
+        background: var(--white);
+    }
+    
+    .promedio-materia.reprobado {
+        color: var(--error-red);
+        border-color: var(--error-red);
+        background: var(--white);
+    }
+    
+    .promedio-materia:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .promedio-materia.aprobado:hover {
+        background: rgba(5, 150, 105, 0.05);
+    }
+    
+    .promedio-materia.reprobado:hover {
+        background: rgba(220, 38, 38, 0.05);
+    }
+    
+    /* Promedios por parcial - MÁS BLANCO */
+    .parciales-resumen {
+        background: var(--white);
+        padding: 2rem 2.5rem;
+        border-top: 1px solid var(--light-gray);
+    }
+    
+    .parcial-item {
+        text-align: center;
+        padding: 1.2rem;
+        transition: var(--transition);
+    }
+    
+    .parcial-item:hover {
+        transform: translateY(-3px);
+    }
+    
+    .parcial-value {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        font-family: 'Inter', sans-serif;
+        color: var(--primary-blue); /* Azul principal */
+    }
+    
+    .parcial-label {
+        color: var(--dark-blue); /* Azul oscuro */
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+    
+    /* Footer con azul sutil */
+    .dashboard-footer {
+        margin-top: 5rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--pale-blue);
+        color: var(--medium-blue);
+        font-size: 0.9rem;
+        text-align: center;
+        background: linear-gradient(to bottom, var(--subtle-blue), transparent);
+        padding: 2rem;
+        border-radius: 16px;
+    }
+    
+    /* Estados vacíos */
+    .empty-state {
+        padding: 5rem 2rem;
+        text-align: center;
+        background: var(--white);
+        border-top: 1px solid var(--light-gray);
+    }
+    
+    .empty-icon {
+        font-size: 3.5rem;
+        color: var(--light-gray);
+        margin-bottom: 1.5rem;
+        opacity: 0.7;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .main-container {
+            padding: 70px 30px 40px;
+        }
+        
+        .promedio-value {
+            font-size: 3.2rem;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .student-header {
+            flex-direction: column;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        
+        .student-identity {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        
+        .logout-btn {
+            align-self: flex-start;
+            margin-top: 1rem;
+        }
+        
+        .promedio-value {
+            font-size: 2.8rem;
+        }
+        
+        .student-logo {
+            width: 110px;
+            height: 110px;
+        }
+        
+        .student-name {
+            font-size: 2rem;
+        }
     }
     
     @media (max-width: 768px) {
-        .circle-rating-large {
-            width: 50px;
-            height: 50px;
+        .main-container {
+            padding: 60px 20px 30px;
         }
         
-        .display-1 {
-            font-size: 3.5rem !important;
+        .student-card {
+            padding: 2.5rem;
         }
         
-        h1, .h1 {
-            font-size: 2rem !important;
+        .student-logo {
+            width: 100px;
+            height: 100px;
         }
         
-        h2, .h2 {
-            font-size: 1.75rem !important;
+        .student-name {
+            font-size: 1.8rem;
         }
         
-        h3, .h3 {
-            font-size: 1.5rem !important;
+        .calificaciones-table th,
+        .calificaciones-table td {
+            padding: 1.2rem 1.5rem;
         }
         
-        .fs-5 {
-            font-size: 1rem !important;
+        .calificacion-circle {
+            width: 55px;
+            height: 55px;
+            font-size: 0.95rem;
         }
         
-        .fs-6 {
-            font-size: 0.9rem !important;
-        }
-        
-    }
-    
-    @media (max-width: 576px) {
-        .display-1 {
-            font-size: 3rem !important;
-        }
-        
-        .circle-rating-large {
+        .materia-icon {
             width: 45px;
             height: 45px;
         }
         
-        .badge.fs-5 {
-            font-size: 0.9rem !important;
-            padding: 0.5rem 0.8rem !important;
+        .promedio-value {
+            font-size: 2.6rem;
+        }
+        
+        .promedio-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
         }
     }
     
-    .border-end {
-        border-right: 1px solid #e2e8f0 !important;
+    @media (max-width: 576px) {
+        .promedio-value {
+            font-size: 2.4rem;
+        }
+        
+        .parcial-item {
+            padding: 1rem;
+        }
+        
+        .parcial-value {
+            font-size: 1.8rem;
+        }
+        
+        .promedio-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .student-name {
+            font-size: 1.7rem;
+        }
+        
+        .student-matricula {
+            font-size: 1rem;
+        }
+        
+        .student-logo {
+            width: 90px;
+            height: 90px;
+        }
     }
 </style>
 
+<div class="main-container">
+    <!-- Sección de información del alumno - CON TONOS AZULES SUTILES -->
+    <section class="student-info-section">
+        <div class="student-card">
+            <div class="student-header">
+                <div class="student-identity">
+                    <!-- Logo del colegio con borde azul sutil -->
+                    <div class="student-logo">
+                        <img src="{% static 'img/logo-cseio-blanco.png' %}" alt="Logo CSEIO">
+                    </div>
+                    <div class="student-details">
+                        <h2 class="student-name">{{ alumno.nombre }}</h2>
+                        <!-- Matrícula con línea azul sutil -->
+                        <div class="student-matricula">
+                            <i class="bi bi-person-vcard"></i>
+                            <span>Matrícula: {{ alumno.matricula }}</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-btn">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+            
+            <!-- Información de institución con línea azul -->
+            <div class="institution-info">
+                <div class="institution-name">Colegio Superior CSEIO</div>
+                <div class="institution-program">BACHILLERATO NGU NIYA YANU ZACU KJUABITSIEN</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sección de promedios con tonos azules sutiles -->
+    <section class="promedios-section">
+        <div class="row g-5">
+            <!-- Promedio Parciales -->
+            <div class="col-lg-4 col-md-12">
+                <div class="promedio-card">
+                    <div class="promedio-icon">
+                        <i class="bi bi-calculator"></i>
+                    </div>
+                    <div class="promedio-label">
+                        <i class="bi bi-graph-up"></i>
+                        Promedio Parciales
+                    </div>
+                    <div class="promedio-value">{{ promedio_parciales|floatformat:1 }}</div>
+                </div>
+            </div>
+            
+            <!-- Promedio Global -->
+            <div class="col-lg-4 col-md-6">
+                <div class="promedio-card">
+                    <div class="promedio-icon">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+                    <div class="promedio-label">
+                        <i class="bi bi-pencil-square"></i>
+                        Promedio Global
+                    </div>
+                    <div class="promedio-value">{{ promedio_profesor|floatformat:1 }}</div>
+                </div>
+            </div>
+            
+            <!-- Promedio Final - CON MÁS AZUL SUTIL -->
+            <div class="col-lg-4 col-md-6">
+                <div class="promedio-card final-card">
+                    <div class="promedio-icon">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div class="promedio-label">
+                        <i class="bi bi-award"></i>
+                        Promedio Final
+                    </div>
+                    <div class="promedio-value">{{ promedio_final|floatformat:1 }}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sección de calificaciones con tabla MÁS BLANCA -->
+    <section class="calificaciones-section">
+        <div class="calificaciones-card">
+            <div class="calificaciones-header">
+                <h3>
+                    <i class="bi bi-table"></i>
+                    Calificaciones por Parcial
+                </h3>
+            </div>
+            
+            <div class="p-0">
+                {% if materias %}
+                <div class="table-responsive">
+                    <table class="calificaciones-table">
+                        <thead>
+                            <tr>
+                                <th class="text-start ps-4">Materia</th>
+                                <th class="text-center">1er Parcial</th>
+                                <th class="text-center">2do Parcial</th>
+                                <th class="text-center">3er Parcial</th>
+                                <th class="text-center pe-4">Promedio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for materia in materias %}
+                            <tr>
+                                <!-- Materia -->
+                                <td class="text-start ps-4">
+                                    <div class="materia-cell">
+                                        <div class="materia-icon">
+                                            <i class="bi bi-journal-bookmark"></i>
+                                        </div>
+                                        <div>
+                                            <div class="materia-nombre">{{ materia.nombre }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                <!-- 1er Parcial -->
+                                <td class="text-center">
+                                    {% if materia.parcial1 > 0 %}
+                                    <div class="calificacion-circle {% if materia.parcial1 >= 7.0 %}aprobado{% else %}reprobado{% endif %}">
+                                        {{ materia.parcial1|floatformat:1 }}
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted" style="font-size: 1rem;">-</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <!-- 2do Parcial -->
+                                <td class="text-center">
+                                    {% if materia.parcial2 > 0 %}
+                                    <div class="calificacion-circle {% if materia.parcial2 >= 7.0 %}aprobado{% else %}reprobado{% endif %}">
+                                        {{ materia.parcial2|floatformat:1 }}
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted" style="font-size: 1rem;">-</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <!-- 3er Parcial -->
+                                <td class="text-center">
+                                    {% if materia.parcial3 > 0 %}
+                                    <div class="calificacion-circle {% if materia.parcial3 >= 7.0 %}aprobado{% else %}reprobado{% endif %}">
+                                        {{ materia.parcial3|floatformat:1 }}
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted" style="font-size: 1rem;">-</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <!-- Promedio de la materia -->
+                                <td class="text-center pe-4">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <span class="promedio-materia {% if materia.promedio >= 7.0 %}aprobado{% else %}reprobado{% endif %}">
+                                            {{ materia.promedio|floatformat:1 }}
+                                        </span>
+                                        <small class="text-muted mt-1">/10.0</small>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Promedios por parcial - MÁS BLANCO -->
+                <div class="parciales-resumen">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="parcial-item">
+                                <div class="parcial-value">{{ promedio_p1|floatformat:1 }}</div>
+                                <div class="parcial-label">Prom. 1er Parcial</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="parcial-item">
+                                <div class="parcial-value">{{ promedio_p2|floatformat:1 }}</div>
+                                <div class="parcial-label">Prom. 2do Parcial</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="parcial-item">
+                                <div class="parcial-value">{{ promedio_p3|floatformat:1 }}</div>
+                                <div class="parcial-label">Prom. 3er Parcial</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% else %}
+                <!-- Estado vacío -->
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="bi bi-journal-x"></i>
+                    </div>
+                    <h4 class="text-muted mb-2">No hay calificaciones registradas</h4>
+                    <p class="text-muted mb-4">Las calificaciones aparecerán aquí una vez que sean cargadas por los profesores.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer con azul sutil -->
+    <footer class="dashboard-footer">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">
+                    <i class="bi bi-shield-lock me-1" style="color: var(--primary-blue);"></i>
+                    <span style="color: var(--dark-blue); font-weight: 600;">Sistema de calificaciones © {% now "Y" %} CSEIO</span>
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">
+                    <i class="bi bi-clock me-1" style="color: var(--primary-blue);"></i>
+                    <span style="color: var(--dark-blue); font-weight: 500;">Última consulta: {% now "j/m/Y H:i" %}</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+</div>
+
 <script>
-    // Mejorar accesibilidad y UX
     document.addEventListener('DOMContentLoaded', function() {
-        // Añadir tooltips a los círculos de calificación
-        document.querySelectorAll('.circle-rating-large').forEach(circle => {
-            const score = circle.textContent.trim();
-            circle.setAttribute('title', `Calificación: ${score}`);
-            circle.setAttribute('data-bs-toggle', 'tooltip');
-            circle.setAttribute('data-bs-placement', 'top');
-        });
-        
-        // Inicializar tooltips de Bootstrap
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-        
-        // Efecto hover en las filas de la tabla
-        const tableRows = document.querySelectorAll('tbody tr');
-        tableRows.forEach(row => {
-            row.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.01)';
-                this.style.boxShadow = '0 5px 15px rgba(30, 58, 138, 0.1)';
+        // Efecto hover en las calificaciones circulares
+        document.querySelectorAll('.calificacion-circle').forEach(circle => {
+            circle.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
             });
             
-            row.addEventListener('mouseleave', function() {
+            circle.addEventListener('mouseleave', function() {
                 this.style.transform = 'scale(1)';
-                this.style.boxShadow = 'none';
             });
         });
-
+        
+        // Efecto hover en promedios de materia
+        document.querySelectorAll('.promedio-materia').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Animaciones de entrada
+        document.querySelectorAll('.promedio-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.animation = 'fadeInUp 0.5s ease-out forwards';
+            card.style.opacity = '0';
+        });
+        
+        document.querySelector('.student-card').style.animation = 'fadeIn 0.5s ease-out 0.2s forwards';
+        document.querySelector('.student-card').style.opacity = '0';
+        
+        document.querySelector('.calificaciones-card').style.animation = 'fadeIn 0.5s ease-out 0.4s forwards';
+        document.querySelector('.calificaciones-card').style.opacity = '0';
+        
+        // Añadir tooltips a las calificaciones
+        document.querySelectorAll('.calificacion-circle').forEach(circle => {
+            const score = circle.textContent.trim();
+            const aprobado = circle.classList.contains('aprobado');
+            
+            let tooltipText = `Calificación: ${score}`;
+            if (aprobado) {
+                tooltipText += ' (Aprobado)';
+            } else {
+                tooltipText += ' (No aprobado)';
+            }
+            
+            circle.setAttribute('title', tooltipText);
+            circle.setAttribute('data-bs-toggle', 'tooltip');
+        });
+        
+        // Añadir estilos de animación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(15px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            /* Efecto sutil en hover */
+            .promedio-card:hover .promedio-icon {
+                box-shadow: 0 4px 15px rgba(29, 78, 216, 0.15);
+            }
+            
+            /* Logo con efecto sutil */
+            .student-logo:hover {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(29, 78, 216, 0.15);
+            }
+            
+            /* Efecto hover más sutil para la tabla */
+            .calificaciones-table tbody tr:hover {
+                transition: all 0.2s ease;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Inicializar tooltips de Bootstrap si están disponibles
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
     });
 </script>
 {% endblock %}

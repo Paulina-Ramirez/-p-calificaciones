@@ -1,243 +1,359 @@
 {% extends 'alumnos/base.html' %}
+{% load static %}
 
-{% block title %}Acceso al Sistema Escolar{% endblock %}
+{% block title %}Acceso al Sistema - CSEIO{% endblock %}
 
 {% block content %}
 <style>
-    /* Reset y configuración base */
+    /* Paleta elegante de azules y grises */
+    :root {
+        --primary-blue: #1e3a8a;      /* Azul oscuro elegante */
+        --secondary-blue: #3b82f6;    /* Azul medio */
+        --accent-blue: #60a5fa;       /* Azul claro */
+        --light-blue: #dbeafe;        /* Azul muy claro */
+        --dark-gray: #374151;         /* Gris oscuro */
+        --medium-gray: #6b7280;       /* Gris medio */
+        --light-gray: #f3f4f6;        /* Gris claro */
+        --white: #ffffff;
+        --card-shadow: 0 20px 60px rgba(30, 58, 138, 0.15);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Reset */
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
     
-    /* Body centrado vertical y horizontalmente */
+    /* Fondo elegante */
     body {
         font-family: 'Inter', 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         min-height: 100vh;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
         padding: 20px;
-        color: #1e293b;
-        width: 100%;
+        color: var(--dark-gray);
+        position: relative;
+        overflow-x: hidden;
     }
     
-    /* Contenedor principal CENTRADO */
+    /* Patrón sutil de líneas diagonales */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            linear-gradient(45deg, transparent 49.5%, rgba(59, 130, 246, 0.02) 50%, transparent 50.5%);
+        background-size: 60px 60px;
+        z-index: -1;
+    }
+    
+    /* Header con logo en esquina y nombre a la derecha */
+    .header-container {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        right: 30px;
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        z-index: 100;
+    }
+    
+    .logo-corner {
+        width: 160px;
+        height: 160px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.15));
+        transition: var(--transition);
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    
+    .logo-corner:hover {
+        transform: scale(1.05) rotate(2deg);
+        filter: drop-shadow(0 6px 30px rgba(0, 0, 0, 0.2));
+    }
+    
+    .institution-header {
+        flex: 1;
+        padding-left: 10px;
+        border-left: 3px solid var(--accent-blue);
+    }
+    
+    .institution-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+        letter-spacing: 1.5px;
+        line-height: 1;
+    }
+    
+    .institution-header p {
+        font-size: 1.1rem;
+        color: var(--medium-gray);
+        font-weight: 500;
+        line-height: 1.5;
+        letter-spacing: 0.3px;
+        max-width: 600px;
+    }
+    
+    .bachillerato-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--primary-blue);
+        margin-top: 5px;
+        font-style: italic;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Contenedor principal - FORMULARIO MÁS ARRIBA Y ANCHO */
     .login-wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 100%;
         min-height: 100vh;
-        width: 100%;
+        padding-top: 100px; /* MÁS ARRIBA - reducido de 140px a 100px */
     }
     
-    .login-container {
-        width: 100%;
-        max-width: 480px;
-        animation: fadeIn 0.8s ease-out;
-        margin: 0 auto;
-    }
-    
-    /* Tarjeta de login - MÁS GRANDE */
+    /* Tarjeta de login - MÁS ANCHA */
     .login-card {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 15px 50px rgba(30, 58, 138, 0.2);
+        background: var(--white);
+        border-radius: 24px;
+        box-shadow: var(--card-shadow);
         overflow: hidden;
-        border: 1px solid #e2e8f0;
-    }
-    
-    /* Header institucional - TEXTO MÁS GRANDE */
-    .institution-header {
-        background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-        padding: 3rem 2.5rem;
-        text-align: center;
-        color: white;
         position: relative;
+        border: 1px solid rgba(219, 234, 254, 0.5);
+        width: 100%;
+        max-width: 520px; /* MÁS ANCHO - aumentado de 460px a 520px */
+        margin: 0 auto;
+        animation: slideUp 0.6s ease-out;
     }
     
-    .institution-logo {
+    .login-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, 
+            var(--accent-blue) 0%, 
+            var(--secondary-blue) 50%, 
+            var(--primary-blue) 100%);
+    }
+    
+    /* Encabezado del formulario - MÁS ESPACIOSO */
+    .form-header {
+        padding: 40px 40px 30px; /* Más espacio interno */
+        text-align: center;
+        position: relative;
+        background: linear-gradient(135deg, #f8fafc, #eff6ff);
+        border-bottom: 2px solid var(--light-blue);
+    }
+    
+    .academic-icon {
+        width: 75px; /* Más grande */
+        height: 75px; /* Más grande */
+        background: linear-gradient(135deg, var(--white), var(--light-blue));
+        border-radius: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 1.2rem;
-        margin-bottom: 1.5rem;
+        margin: 0 auto 25px;
+        color: var(--primary-blue);
+        font-size: 1.8rem; /* Más grande */
+        box-shadow: 
+            0 8px 20px rgba(59, 130, 246, 0.15),
+            inset 0 -2px 4px rgba(30, 58, 138, 0.1);
+        transition: var(--transition);
     }
     
-    .logo-icon {
-        font-size: 3.5rem;
-        filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));
+    .academic-icon:hover {
+        transform: rotate(-5deg) scale(1.1);
     }
     
-    .institution-name h1 {
-        font-size: 2rem;
+    .form-title {
+        font-size: 1.9rem; /* Más grande */
         font-weight: 700;
-        margin-bottom: 0.5rem;
-        letter-spacing: 0.5px;
+        color: var(--primary-blue);
+        margin-bottom: 12px; /* Más espacio */
+        line-height: 1.3;
     }
     
-    .institution-name p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        font-weight: 400;
+    .form-subtitle {
+        color: var(--medium-gray);
+        font-size: 1.05rem; /* Más grande */
+        line-height: 1.5;
+        max-width: 380px; /* Más ancho para aprovechar el espacio */
+        margin: 0 auto;
     }
     
-    /* Formulario - TEXTO MÁS GRANDE */
-    .login-form {
-        padding: 3rem 2.5rem;
+    /* Contenido del formulario - MÁS ESPACIOSO */
+    .form-content {
+        padding: 35px 40px; /* Más espacio interno */
     }
     
+    /* Grupo de formulario - MÁS GRANDE */
     .form-group {
-        margin-bottom: 2rem;
+        margin-bottom: 28px; /* Más espacio */
         position: relative;
     }
     
     .form-label {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 10px;
         color: var(--primary-blue);
         font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
-        letter-spacing: 0.5px;
+        font-size: 0.95rem; /* Más grande */
+        margin-bottom: 12px; /* Más espacio */
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-label i {
+        font-size: 1.1rem; /* Más grande */
+        color: var(--secondary-blue);
     }
     
     .form-input {
         width: 100%;
-        padding: 1.2rem 1.5rem;
-        border: 2px solid #e2e8f0;
-        border-radius: 10px;
-        font-size: 1.1rem;
-        background: #f8fafc;
-        color: #334155;
-        transition: all 0.3s ease;
+        padding: 18px 20px; /* Más espacio interno */
+        border: 2px solid #e5e7eb;
+        border-radius: 14px;
+        font-size: 1.05rem; /* Más grande */
+        background: var(--light-gray);
+        color: var(--dark-gray);
+        transition: var(--transition);
         font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
     }
     
     .form-input:focus {
         outline: none;
-        border-color: var(--accent-blue);
-        background: white;
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        border-color: var(--secondary-blue);
+        background: var(--white);
+        box-shadow: 
+            0 0 0 4px rgba(59, 130, 246, 0.15),
+            inset 0 2px 4px rgba(0, 0, 0, 0.02);
         transform: translateY(-2px);
     }
     
     .form-input::placeholder {
-        color: #94a3b8;
-        font-size: 1rem;
+        color: #9ca3af;
+        font-weight: 400;
+        font-size: 1rem; /* Más grande */
     }
     
-    /* Botón principal - MÁS GRANDE */
+    /* Botón de acceso - MÁS GRANDE */
     .login-button {
         width: 100%;
-        padding: 1.2rem;
-        background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-        color: white;
+        padding: 19px; /* Más alto */
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: var(--white);
         border: none;
-        border-radius: 10px;
-        font-size: 1.1rem;
+        border-radius: 14px;
+        font-size: 1.1rem; /* Más grande */
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 0.75rem;
+        transition: var(--transition);
+        margin-top: 12px; /* Más espacio */
         letter-spacing: 0.5px;
-        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px; /* Más espacio entre icono y texto */
+        box-shadow: 0 12px 30px rgba(30, 58, 138, 0.2);
     }
     
     .login-button:hover {
-        background: linear-gradient(135deg, var(--accent-blue), var(--dark-blue));
+        background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
         transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 18px 40px rgba(30, 58, 138, 0.3);
     }
     
-    /* Enlaces de ayuda - TEXTO MÁS GRANDE */
-    .help-links {
-        text-align: center;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid #e2e8f0;
-    }
-    
-    .help-link {
-        display: block;
-        color: var(--secondary-blue);
-        text-decoration: none;
-        font-size: 1rem;
-        margin-bottom: 1rem;
-        transition: color 0.3s ease;
-        font-weight: 500;
-    }
-    
-    .help-link:hover {
-        color: var(--accent-blue);
-        text-decoration: underline;
-    }
-    
-    /* Nota legal - TEXTO MÁS GRANDE */
-    .legal-notice {
-        background: #f8fafc;
-        padding: 2rem;
-        text-align: center;
-        border-top: 1px solid #e2e8f0;
-    }
-    
-    .notice-title {
-        color: var(--primary-blue);
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    .notice-text {
-        color: #64748b;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* Footer - TEXTO MÁS GRANDE */
-    .login-footer {
-        text-align: center;
-        padding: 2rem;
-        color: #64748b;
-        font-size: 0.9rem;
-        border-top: 1px solid #e2e8f0;
-        background: #f8fafc;
-    }
-    
-    .copyright {
-        font-size: 0.85rem;
-        opacity: 0.8;
-        margin-top: 0.75rem;
+    .login-button:active {
+        transform: translateY(-1px);
     }
     
     /* Mensajes de error - MÁS GRANDE */
     .error-message {
-        background: linear-gradient(135deg, #fee, #fdd);
-        border: 1px solid rgba(220, 38, 38, 0.2);
-        border-radius: 10px;
-        padding: 1.2rem 1.5rem;
-        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border-radius: 14px;
+        padding: 18px 22px; /* Más espacio */
+        margin-bottom: 28px; /* Más espacio */
         color: #dc2626;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        animation: shake 0.5s ease-in-out;
-        font-size: 1rem;
+        gap: 14px; /* Más espacio */
+        animation: slideIn 0.4s ease-out;
+        border: 1px solid rgba(220, 38, 38, 0.1);
+        font-weight: 500;
+        font-size: 0.95rem; /* Más grande */
     }
     
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    .error-message i {
+        font-size: 1.2rem; /* Más grande */
+        flex-shrink: 0;
+    }
+    
+    /* Footer del formulario - MÁS GRANDE */
+    .form-footer {
+        text-align: center;
+        margin-top: 32px; /* Más espacio */
+        padding-top: 28px; /* Más espacio */
+        border-top: 2px solid var(--light-gray);
+    }
+    
+    .security-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px; /* Más espacio */
+        color: var(--medium-gray);
+        font-size: 0.95rem; /* Más grande */
+        font-weight: 500;
+        margin-bottom: 14px; /* Más espacio */
+        padding: 14px 26px; /* Más espacio */
+        background: var(--light-gray);
+        border-radius: 50px;
+        transition: var(--transition);
+        border: 1px solid rgba(219, 234, 254, 0.5);
+    }
+    
+    .security-badge:hover {
+        background: var(--light-blue);
+        color: var(--primary-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+    }
+    
+    .security-badge i {
+        color: var(--secondary-blue);
+        font-size: 1.1rem; /* Más grande */
+    }
+    
+    .copyright {
+        color: #9ca3af;
+        font-size: 0.85rem; /* Más grande */
+        margin-top: 8px;
     }
     
     /* Animaciones */
-    @keyframes fadeIn {
+    @keyframes slideUp {
         from {
             opacity: 0;
             transform: translateY(30px);
@@ -248,181 +364,283 @@
         }
     }
     
-    /* Responsive */
-    @media (max-width: 576px) {
-        .login-wrapper {
-            padding: 15px;
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-15px);
         }
-        
-        .login-container {
-            max-width: 100%;
-        }
-        
-        .institution-header {
-            padding: 2.5rem 2rem;
-        }
-        
-        .login-form {
-            padding: 2.5rem 2rem;
-        }
-        
-        .institution-name h1 {
-            font-size: 1.7rem;
-        }
-        
-        .institution-name p {
-            font-size: 1rem;
-        }
-        
-        .logo-icon {
-            font-size: 3rem;
-        }
-        
-        .form-input {
-            padding: 1.1rem 1.3rem;
-            font-size: 1.05rem;
-        }
-        
-        .login-button {
-            padding: 1.1rem;
-            font-size: 1.05rem;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
     
-    /* Para pantallas grandes */
-    @media (min-width: 1200px) {
-        .login-container {
-            max-width: 520px;
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .header-container {
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            gap: 20px;
         }
         
-        .institution-name h1 {
+        .logo-corner {
+            width: 150px;
+            height: 150px;
+        }
+        
+        .institution-header h1 {
             font-size: 2.2rem;
         }
         
-        .form-input {
-            font-size: 1.15rem;
-            padding: 1.3rem 1.7rem;
+        .institution-header p {
+            font-size: 1rem;
+        }
+        
+        .bachillerato-name {
+            font-size: 1.2rem;
+        }
+        
+        .login-wrapper {
+            padding-top: 90px; /* Ajustado */
+        }
+        
+        .login-card {
+            max-width: 500px; /* Ajustado para pantallas medianas */
         }
     }
     
-    /* Efectos decorativos */
-    .accent-line {
-        height: 5px;
-        background: linear-gradient(90deg, var(--secondary-blue), var(--accent-blue));
-        width: 70px;
-        margin: 1rem auto 2rem;
-        border-radius: 3px;
+    @media (max-width: 992px) {
+        .header-container {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            gap: 15px;
+        }
+        
+        .logo-corner {
+            width: 140px;
+            height: 140px;
+        }
+        
+        .institution-header h1 {
+            font-size: 2rem;
+        }
+        
+        .institution-header p {
+            font-size: 0.95rem;
+        }
+        
+        .bachillerato-name {
+            font-size: 1.1rem;
+        }
+        
+        .login-wrapper {
+            padding-top: 80px; /* Ajustado */
+        }
+        
+        .login-card {
+            max-width: 480px; /* Ajustado */
+        }
     }
     
-    /* Indicador de accesibilidad */
-    .accessibility-badge {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+    @media (max-width: 768px) {
+        .header-container {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            flex-direction: column;
+            text-align: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        
+        .logo-corner {
+            width: 150px;
+            height: 150px;
+        }
+        
+        .institution-header {
+            padding-left: 0;
+            border-left: none;
+            border-top: 3px solid var(--accent-blue);
+            padding-top: 15px;
+        }
+        
+        .institution-header h1 {
+            font-size: 2.2rem;
+        }
+        
+        .institution-header p {
+            font-size: 1rem;
+            max-width: 100%;
+            padding: 0 20px;
+        }
+        
+        .bachillerato-name {
+            font-size: 1.2rem;
+        }
+        
+        .login-wrapper {
+            padding-top: 40px;
+            min-height: auto;
+        }
+        
+        .login-card {
+            max-width: 90%;
+        }
+        
+        .form-header {
+            padding: 35px 30px 25px;
+        }
+        
+        .form-content {
+            padding: 30px 25px;
+        }
+        
+        .academic-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.7rem;
+        }
+        
+        .form-title {
+            font-size: 1.8rem;
+        }
     }
     
-    /* Asegurar centrado perfecto */
-    html {
-        height: 100%;
-        width: 100%;
-    }
-    
-    body {
-        height: 100%;
-        width: 100%;
+    @media (max-width: 480px) {
+        .header-container {
+            margin-bottom: 20px;
+        }
+        
+        .logo-corner {
+            width: 130px;
+            height: 130px;
+        }
+        
+        .institution-header h1 {
+            font-size: 1.9rem;
+        }
+        
+        .institution-header p {
+            font-size: 0.9rem;
+        }
+        
+        .bachillerato-name {
+            font-size: 1.1rem;
+        }
+        
+        .login-wrapper {
+            padding-top: 30px;
+        }
+        
+        .form-header {
+            padding: 30px 25px 20px;
+        }
+        
+        .form-content {
+            padding: 25px 20px;
+        }
+        
+        .academic-icon {
+            width: 65px;
+            height: 65px;
+            font-size: 1.6rem;
+        }
+        
+        .form-title {
+            font-size: 1.7rem;
+        }
+        
+        .form-input {
+            padding: 16px 18px;
+            font-size: 1rem;
+        }
+        
+        .login-button {
+            padding: 17px;
+            font-size: 1.05rem;
+        }
     }
 </style>
 
+<!-- Header con logo en esquina y nombre a la derecha -->
+<div class="header-container">
+    <img src="{% static 'img/logo-cseio-blanco.png' %}" alt="Logo CSEIO" class="logo-corner">
+    
+    <div class="institution-header">
+        <h1>CSEIO</h1>
+        <p>Colegio Superior para la Educación Integral Intercultural de Oaxaca</p>
+        <div class="bachillerato-name">BACHILLERATO NGU NIYA YANU ZACU KJUABITSIEN</div>
+    </div>
+</div>
+
+<!-- Contenedor principal - FORMULARIO MÁS ARRIBA Y ANCHO -->
 <div class="login-wrapper">
-    <div class="login-container">
-        <div class="login-card">
-            <!-- Header institucional -->
-            <div class="institution-header">
-                
-                <div class="institution-logo">
-                    <i class="bi bi-mortarboard-fill logo-icon"></i>
-                </div>
-                <div class="institution-name">
-                    <h1>Consulta de Calificaciones</h1>
-                </div>
-                <p style="font-size: 1rem; opacity: 0.9;">Ingresa con tu matrícula</p>
+    <div class="login-card">
+        <div class="form-header">
+            <div class="academic-icon">
+                <i class="bi bi-mortarboard"></i>
             </div>
-            
-            <!-- Formulario -->
-            <div class="login-form">
-                <form method="POST" id="loginForm">
-                    {% csrf_token %}
-                    
-                    <!-- Campo de matrícula -->
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="bi bi-person-badge me-1"></i>
-                            Matrícula
-                        </label>
-                        <input 
-                            type="text" 
-                            class="form-input" 
-                            name="matricula"
-                            placeholder="Ingresa tu número de matrícula"
-                            required
-                            autofocus
-                            autocomplete="off"
-                            id="matriculaInput"
-                        >
-                    </div>
-                    
-                    <!-- Campo de contraseña (si decides agregarlo después) -->
-                    <!--
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="bi bi-lock me-1"></i>
-                            Contraseña
-                        </label>
-                        <input 
-                            type="password" 
-                            class="form-input" 
-                            name="password"
-                            placeholder="Ingresa tu contraseña"
-                            required
-                            autocomplete="off"
-                        >
-                    </div>
-                    -->
-                    
-                    {% if error %}
-                    <div class="error-message" id="errorMessage">
-                        <i class="bi bi-exclamation-octagon-fill"></i>
-                        <div>{{ error }}</div>
-                    </div>
-                    {% endif %}
-                    
-                    <!-- Botón de ingreso -->
-                    <button type="submit" class="login-button" id="submitBtn">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Ingresar
-                    </button>
-                </form>
+            <h2 class="form-title">Portal Académico</h2>
+            <p class="form-subtitle">Consulta tus calificaciones con tu número de matrícula</p>
+        </div>
+        
+        <div class="form-content">
+            <form method="POST" id="loginForm">
+                {% csrf_token %}
                 
-            </div>
-            
+                <!-- Campo de matrícula -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-person-vcard"></i>
+                        Matrícula Estudiantil
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        name="matricula"
+                        placeholder="Ingresa tu número de matrícula"
+                        required
+                        autofocus
+                        autocomplete="off"
+                        id="matriculaInput"
+                    >
+                </div>
+                
+                {% if error %}
+                <div class="error-message" id="errorMessage">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <div>{{ error }}</div>
+                </div>
+                {% endif %}
+                
+                <!-- Botón de acceso -->
+                <button type="submit" class="login-button" id="submitBtn">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Acceder al Sistema</span>
+                </button>
+            </form>
             
             <!-- Footer -->
-            <div class="login-footer">
-                <div style="margin-bottom: 0.75rem; font-size: 1rem;">
-                    <i></i>
-                    Sistema Escolar de Calificaciones
+            <div class="form-footer">
+                <div class="security-badge">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Sistema académico seguro y confidencial</span>
                 </div>
                 <div class="copyright">
-                    © {% now "Y" %} Todos los derechos reservados.
+                    © {% now "Y" %} Colegio Superior CSEIO - Plataforma Académica
                 </div>
             </div>
         </div>
@@ -430,99 +648,228 @@
 </div>
 
 <script>
-    // Efectos interactivos
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('loginForm');
         const submitBtn = document.getElementById('submitBtn');
         const matriculaInput = document.getElementById('matriculaInput');
+        const logo = document.querySelector('.logo-corner');
         
-        // Efecto de foco en inputs
+        // Efecto flotante sutil en el logo
+        function startLogoFloat() {
+            logo.style.animation = 'float 4s ease-in-out infinite';
+        }
+        
+        function stopLogoFloat() {
+            logo.style.animation = '';
+        }
+        
+        logo.addEventListener('mouseenter', function() {
+            stopLogoFloat();
+        });
+        
+        logo.addEventListener('mouseleave', function() {
+            startLogoFloat();
+        });
+        
+        // Iniciar efecto flotante
+        startLogoFloat();
+        
+        // Efectos en el input de matrícula
         matriculaInput.addEventListener('focus', function() {
-            this.style.transform = 'scale(1.02)';
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 12px 30px rgba(59, 130, 246, 0.15)';
         });
         
         matriculaInput.addEventListener('blur', function() {
-            this.style.transform = 'scale(1)';
+            this.style.transform = 'translateY(0)';
+            if (this.value.trim().length === 0) {
+                this.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.02)';
+            }
         });
         
-        // Efecto de carga en el botón
-        form.addEventListener('submit', function(e) {
-            if (!submitBtn.disabled) {
-                // Deshabilitar botón
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Verificando...';
-                submitBtn.style.opacity = '0.8';
-                
-                // Eliminar mensaje de error si existe
-                const errorMsg = document.getElementById('errorMessage');
-                if (errorMsg) {
-                    errorMsg.style.animation = 'fadeOut 0.3s ease forwards';
-                    setTimeout(() => {
-                        if (errorMsg.parentNode) {
-                            errorMsg.parentNode.removeChild(errorMsg);
-                        }
-                    }, 300);
+        // Validación en tiempo real
+        matriculaInput.addEventListener('input', function() {
+            let value = this.value.trim().replace(/[^\d]/g, '');
+            
+            // Solo permitir números
+            if (value !== this.value) {
+                this.value = value;
+            }
+            
+            // Efecto visual basado en longitud
+            if (value.length > 0) {
+                // Color de borde según validación
+                if (value.length >= 8 && value.length <= 12) {
+                    this.style.borderColor = 'var(--secondary-blue)';
+                    this.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                } else if (value.length > 0) {
+                    this.style.borderColor = '#f59e0b';
+                    this.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.1)';
+                }
+            } else {
+                this.style.borderColor = '#e5e7eb';
+                this.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.02)';
+            }
+        });
+        
+        // Formatear matrícula al perder foco
+        matriculaInput.addEventListener('blur', function() {
+            const value = this.value.trim().replace(/[^\d]/g, '');
+            if (value.length >= 8) {
+                // Formato: 2024-001-234
+                const formatted = value.replace(/(\d{4})(\d{3})(\d{3,})/, '$1-$2-$3');
+                if (formatted !== value && formatted.match(/\d{4}-\d{3}-\d{3,}/)) {
+                    this.value = formatted;
                 }
             }
         });
         
-        // Auto-seleccionar texto en el input
-        matriculaInput.addEventListener('click', function() {
-            this.select();
-        });
-        
-        // Validación visual en tiempo real
-        matriculaInput.addEventListener('input', function() {
-            const value = this.value.trim();
-            if (value.length > 0) {
-                this.style.borderColor = 'var(--secondary-blue)';
-                this.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)';
-            } else {
-                this.style.borderColor = '#e2e8f0';
-                this.style.boxShadow = 'none';
+        // Manejo del envío del formulario
+        form.addEventListener('submit', function(e) {
+            if (!submitBtn.disabled) {
+                const matricula = matriculaInput.value.trim().replace(/[^\d]/g, '');
+                
+                // Validación
+                if (matricula.length === 0) {
+                    e.preventDefault();
+                    showError('Por favor ingresa tu número de matrícula');
+                    return;
+                }
+                
+                if (matricula.length < 8) {
+                    e.preventDefault();
+                    showError('La matrícula debe tener al menos 8 dígitos');
+                    return;
+                }
+                
+                if (matricula.length > 12) {
+                    e.preventDefault();
+                    showError('La matrícula no puede exceder 12 dígitos');
+                    return;
+                }
+                
+                // Mostrar estado de carga
+                submitBtn.disabled = true;
+                const originalHTML = submitBtn.innerHTML;
+                submitBtn.innerHTML = `
+                    <div class="spinner"></div>
+                    <span>Verificando acceso...</span>
+                `;
+                submitBtn.style.background = 'linear-gradient(135deg, #4b5563, #6b7280)';
+                
+                // Efecto de pulso en el logo durante la carga
+                logo.style.animation = 'float 1s ease-in-out infinite';
             }
         });
         
-        // Animación de aparición para los elementos
-        const formGroups = document.querySelectorAll('.form-group');
-        formGroups.forEach((group, index) => {
-            group.style.animationDelay = `${index * 0.1}s`;
-            group.style.opacity = '0';
-            group.style.transform = 'translateY(10px)';
+        // Función para mostrar errores
+        function showError(message) {
+            // Remover error anterior si existe
+            const existingError = document.getElementById('validationError');
+            if (existingError) {
+                existingError.remove();
+            }
             
+            // Crear nuevo mensaje de error
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'validationError';
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                <i class="bi bi-exclamation-triangle"></i>
+                <div>${message}</div>
+            `;
+            
+            // Insertar antes del botón
+            submitBtn.parentNode.insertBefore(errorDiv, submitBtn);
+            
+            // Efecto de shake en el input
+            matriculaInput.style.animation = 'shake 0.5s ease-in-out';
+            matriculaInput.style.borderColor = '#dc2626';
             setTimeout(() => {
-                group.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                group.style.opacity = '1';
-                group.style.transform = 'translateY(0)';
-            }, 100 + (index * 100));
+                matriculaInput.style.animation = '';
+            }, 500);
+            
+            matriculaInput.focus();
+        }
+        
+        // Remover mensajes de error al escribir
+        matriculaInput.addEventListener('input', function() {
+            const validationError = document.getElementById('validationError');
+            const serverError = document.getElementById('errorMessage');
+            
+            [validationError, serverError].forEach(error => {
+                if (error) {
+                    error.style.opacity = '0';
+                    error.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        if (error.parentNode) {
+                            error.parentNode.removeChild(error);
+                        }
+                    }, 300);
+                }
+            });
+        });
+        
+        // Auto-seleccionar matrícula al hacer clic
+        matriculaInput.addEventListener('click', function() {
+            if (this.value.length > 0) {
+                this.select();
+            }
         });
     });
     
-    // Estilo para spinner
+    // Estilos dinámicos
     const style = document.createElement('style');
     style.textContent = `
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        
-        .spin {
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
             animation: spin 1s linear infinite;
         }
         
         @keyframes spin {
-            from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
         
-        /* Asegurar centrado perfecto */
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow-x: hidden;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
         
-        /* Mejora de accesibilidad */
+        /* Logo alternativo si no carga */
+        .logo-corner.error {
+            display: none;
+        }
+        
+        .header-container::before {
+            content: 'CSEIO';
+            position: absolute;
+            color: var(--primary-blue);
+            font-weight: 800;
+            font-size: 2.2rem;
+            letter-spacing: 1.5px;
+            display: none;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-corner[src=""] + .institution-header::before,
+        .logo-corner.error + .institution-header::before {
+            display: flex;
+        }
+        
+        /* Mejoras de accesibilidad */
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation-duration: 0.01ms !important;
@@ -532,5 +879,16 @@
         }
     `;
     document.head.appendChild(style);
+    
+    // Manejo de error en logo
+    window.addEventListener('load', function() {
+        const logoImg = document.querySelector('.logo-corner');
+        if (logoImg) {
+            logoImg.onerror = function() {
+                this.classList.add('error');
+                this.src = '';
+            };
+        }
+    });
 </script>
 {% endblock %}
