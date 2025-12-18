@@ -360,6 +360,23 @@
     
     .calificaciones-table thead {
         background: var(--white);
+        position: relative;
+    }
+
+    /* Línea decorativa debajo del thead */
+    .calificaciones-table thead::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 2rem;
+        right: 2rem;
+        height: 2px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            var(--primary-blue) 20%, 
+            var(--primary-blue) 80%, 
+            transparent 100%);
+        border-radius: 2px;
     }
     
     .calificaciones-table th {
@@ -372,6 +389,12 @@
         font-size: 0.9rem;
         white-space: nowrap;
         position: relative;
+        background: linear-gradient(to bottom, var(--white), var(--subtle-blue));
+    }
+
+    /* Efecto hover para los títulos */
+    .calificaciones-table th:hover {
+        background: linear-gradient(to bottom, var(--subtle-blue), var(--pale-blue));
     }
     
     .calificaciones-table th:not(:first-child)::after {
@@ -607,7 +630,265 @@
         padding: 1.5rem;
         border-radius: 14px;
     }
-    
+
+    /* ===== RESUMEN FINAL - DISEÑO INTEGRADO ===== */
+    .final-summary-container {
+        background: var(--white);
+        padding: 1.8rem 2.2rem;
+        border-top: 1px solid var(--light-gray);
+        position: relative;
+        margin-top: 1.5rem;
+    }
+
+    .final-summary-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+        border-radius: 0 0 4px 4px;
+    }
+
+    /* Botón de cerrar sesión mejorado */
+    .session-actions {
+        display: inline-block;
+    }
+
+    .logout-btn-enhanced {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        background: var(--white);
+        color: var(--dark-blue);
+        border: 1.5px solid var(--light-blue);
+        padding: 0.9rem 1.8rem;
+        border-radius: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        min-width: 180px;
+        background: linear-gradient(135deg, var(--white) 0%, var(--subtle-blue) 100%);
+        box-shadow: 0 3px 12px rgba(29, 78, 216, 0.05);
+    }
+
+    .logout-btn-enhanced:hover {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+        color: var(--white);
+        border-color: var(--primary-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(29, 78, 216, 0.15);
+    }
+
+    .logout-btn-enhanced i {
+        font-size: 1.2rem;
+        transition: var(--transition);
+    }
+
+    .logout-btn-enhanced:hover i {
+        transform: translateX(3px);
+    }
+
+    .logout-badge {
+        margin-left: auto;
+        padding: 0.2rem 0.6rem;
+        background: rgba(29, 78, 216, 0.1);
+        border-radius: 8px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        transition: var(--transition);
+    }
+
+    .logout-btn-enhanced:hover .logout-badge {
+        background: rgba(255, 255, 255, 0.2);
+        color: var(--white);
+    }
+
+    /* Promedio final elegante */
+    .final-average-combined {
+        display: inline-block;
+    }
+
+    .average-card-elegant {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1rem 1.8rem;
+        background: var(--white);
+        border-radius: 16px;
+        border: 1.5px solid var(--pale-blue);
+        box-shadow: 0 4px 16px rgba(29, 78, 216, 0.08);
+        transition: var(--transition);
+        min-width: 260px;
+        background: linear-gradient(135deg, var(--white) 0%, var(--subtle-blue) 100%);
+    }
+
+    .average-card-elegant:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(29, 78, 216, 0.12);
+        border-color: var(--light-blue);
+    }
+
+    .average-label-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    .average-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--medium-blue), var(--primary-blue));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 1.3rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
+    }
+
+    .average-title {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .average-title span {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--dark-blue);
+        letter-spacing: 0.5px;
+    }
+
+    .average-subtitle {
+        font-size: 0.75rem;
+        color: var(--medium-gray);
+        font-weight: 500;
+    }
+
+    .average-value-section {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .average-score-display {
+        display: flex;
+        align-items: baseline;
+        gap: 0.3rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .score-main {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--dark-blue);
+        line-height: 1;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .score-scale {
+        font-size: 0.9rem;
+        color: var(--medium-gray);
+        font-weight: 600;
+    }
+
+    .average-status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .status-excellent {
+        background: rgba(5, 150, 105, 0.1);
+        color: var(--success-green);
+    }
+
+    .status-excellent .status-dot {
+        background: var(--success-green);
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+    }
+
+    .status-good {
+        background: rgba(29, 78, 216, 0.1);
+        color: var(--primary-blue);
+    }
+
+    .status-good .status-dot {
+        background: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.2);
+    }
+
+    .status-attention {
+        background: rgba(220, 38, 38, 0.1);
+        color: var(--error-red);
+    }
+
+    .status-attention .status-dot {
+        background: var(--error-red);
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+    }
+
+    /* Responsive para ambos elementos */
+    @media (max-width: 768px) {
+        .final-summary-container {
+            padding: 1.5rem;
+        }
+        
+        .average-card-elegant {
+            min-width: 100%;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .logout-btn-enhanced {
+            min-width: 160px;
+            padding: 0.8rem 1.5rem;
+        }
+        
+        .score-main {
+            font-size: 1.8rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .final-summary-container .row > div {
+            margin-bottom: 1rem;
+        }
+        
+        .final-summary-container .row > div:last-child {
+            margin-bottom: 0;
+        }
+        
+        .logout-btn-enhanced,
+        .average-card-elegant {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .logout-btn-enhanced {
+            justify-content: space-between;
+        }
+    }
+        
     /* Estados vacíos */
     .empty-state {
         padding: 4rem 2rem;
@@ -811,14 +1092,7 @@
                     <div class="logo-label">
                         <small>BACHILLERATO NGU NIYA YANU ZACU KJUABITSIEN</small>
                     </div>
-                    
-                    <!-- Botón de cerrar sesión -->
-                    <div class="sidebar-actions">
-                        <a href="{% url 'logout' %}" class="logout-btn">
-                            <i class="bi bi-box-arrow-right"></i>
-                            Cerrar Sesión
-                        </a>
-                    </div>
+
                 </div>
                 
                 <!-- Contenido principal del alumno -->
@@ -1000,13 +1274,44 @@
                 </div>
                 
                 <!-- Resumen de promedios -->
-                <div class="parciales-resumen">
-                    <div class="col-md-3">
-                        <div class="parcial-item">
-                            <div class="parcial-value cal-final-destacada">
-                                {{ promedio_final|floatformat:1 }}
+                <div class="final-summary-container">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <!-- Botón de cerrar sesión -->
+                            <div class="d-flex align-items-center h-100">
+                                <div class="session-actions">
+                                    <a href="{% url 'logout' %}" class="logout-btn-enhanced">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        <span>Cerrar Sesión</span>
+                                    </a>
+                                </div>
                             </div>
-                            <div class="parcial-label">Promedio Final</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <!-- Promedio final elegante -->
+                            <div class="d-flex justify-content-end">
+                                <div class="final-average-combined">
+                                    <div class="average-card-elegant">
+                                        <!-- Parte izquierda: Icono y etiqueta -->
+                                        <div class="average-label-section">
+                                            <div class="average-icon-wrapper">
+                                                <i class="bi bi-award-fill"></i>
+                                            </div>
+                                            <div class="average-title">
+                                                <span>Promedio Final</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Parte derecha: Valor y estado -->
+                                        <div class="average-value-section">
+                                            <div class="average-score-display">
+                                                <span class="score-main">{{ promedio_final|floatformat:1 }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
