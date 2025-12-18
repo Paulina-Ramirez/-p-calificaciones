@@ -43,7 +43,7 @@
     
     /* Contenedor principal */
     .main-container {
-        max-width: 1400px;
+        max-width: 1600px;
         margin: 0 auto;
         padding: 70px 40px 50px;
     }
@@ -93,16 +93,6 @@
         transition: var(--transition);
         position: relative;
         overflow: hidden;
-    }
-    
-    .logo-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        border-radius: 18px 18px 0 0;
     }
     
     .logo-container:hover {
@@ -159,6 +149,7 @@
         width: 80px;
         height: 3px;
         border-radius: 2px;
+        background: var(--primary-blue);
     }
     
     /* ===== TARJETAS COMPACTAS Y ELEGANTES ===== */
@@ -187,19 +178,10 @@
         overflow: hidden;
     }
     
-    .detail-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        transition: var(--transition);
-    }
-    
-    .detail-card:hover::before {
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+    .detail-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--light-blue);
+        box-shadow: var(--shadow-md);
     }
     
     /* Efecto de brillo sutil */
@@ -244,8 +226,10 @@
         box-shadow: 0 3px 10px rgba(29, 78, 216, 0.08);
     }
     
-    .detail-card:hover .detail-card-icon::before {
-        opacity: 1;
+    .detail-card:hover .detail-card-icon {
+        transform: scale(1.05);
+        background: linear-gradient(135deg, var(--light-blue), var(--medium-blue));
+        color: var(--white);
     }
     
     .detail-card-content {
@@ -285,56 +269,6 @@
         transform: scale(1.03);
     }
     
-    /* Efecto de puntos flotantes sutil */
-    .detail-card .floating-dots {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1;
-    }
-    
-    .detail-card .floating-dots span {
-        position: absolute;
-        background: var(--light-blue);
-        border-radius: 50%;
-        opacity: 0.08;
-        animation: float 8s infinite ease-in-out;
-    }
-    
-    .detail-card .floating-dots span:nth-child(1) {
-        width: 4px;
-        height: 4px;
-        top: 20%;
-        left: 15%;
-        animation-delay: 0s;
-    }
-    
-    .detail-card .floating-dots span:nth-child(2) {
-        width: 6px;
-        height: 6px;
-        top: 70%;
-        left: 80%;
-        animation-delay: 1s;
-    }
-    
-    .detail-card .floating-dots span:nth-child(3) {
-        width: 3px;
-        height: 3px;
-        top: 40%;
-        left: 85%;
-        animation-delay: 2s;
-    }
-    
-    @keyframes float {
-        0%, 100% {
-            transform: translateY(0) translateX(0);
-        }
-        50% {
-            transform: translateY(-8px) translateX(4px);
-        }
-    }
-    
     /* Botón de cerrar sesión compacto */
     .logout-btn {
         background: var(--white);
@@ -357,17 +291,6 @@
         overflow: hidden;
     }
     
-    .logout-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-        transition: var(--transition);
-    }
-    
     .logout-btn:hover {
         background: linear-gradient(to bottom, var(--dark-blue), var(--primary-blue));
         color: var(--white);
@@ -376,106 +299,7 @@
         box-shadow: 0 6px 20px rgba(29, 78, 216, 0.15);
     }
     
-    .logout-btn:hover::before {
-        left: 100%;
-    }
-    
-    /* ===== SECCIÓN DE PROMEDIOS COMPACTOS ===== */
-    .promedios-section {
-        margin-bottom: 50px;
-    }
-    
-    .promedio-card {
-        background: var(--white);
-        border-radius: 18px;
-        padding: 1.8rem 1.5rem;
-        box-shadow: var(--shadow-md);
-        border: 1.5px solid var(--pale-blue);
-        transition: var(--transition);
-        height: 100%;
-        position: relative;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        min-height: 180px;
-    }
-    
-    .promedio-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-        border-color: var(--light-blue);
-    }
-    
-    /* Promedio final */
-    .promedio-card.final-card {
-        background: linear-gradient(135deg, var(--subtle-blue), var(--pale-blue));
-        border: 2px solid var(--medium-blue);
-        box-shadow: var(--shadow-blue);
-    }
-    
-    .promedio-card.final-card:hover {
-        box-shadow: 0 8px 25px rgba(29, 78, 216, 0.15);
-        transform: translateY(-4px);
-        background: linear-gradient(135deg, var(--subtle-blue), var(--light-blue));
-    }
-    
-    .promedio-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.2rem auto;
-        font-size: 1.6rem;
-        background: linear-gradient(135deg, var(--white), var(--subtle-blue));
-        color: var(--primary-blue);
-        border: 1.5px solid var(--pale-blue);
-        transition: var(--transition);
-    }
-    
-    .promedio-card:hover .promedio-icon {
-        transform: scale(1.08);
-        border-color: var(--light-blue);
-        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.1);
-    }
-    
-    /* Icono del promedio final */
-    .promedio-card.final-card .promedio-icon {
-        background: linear-gradient(135deg, var(--light-blue), var(--medium-blue));
-        color: var(--white);
-    }
-    
-    .promedio-value {
-        font-size: 2.8rem;
-        font-weight: 800;
-        line-height: 1;
-        margin: 0.8rem 0;
-        color: var(--dark-gray);
-        font-family: 'Inter', sans-serif;
-        letter-spacing: -1px;
-    }
-    
-    /* Valor del promedio final en azul */
-    .promedio-card.final-card .promedio-value {
-        color: var(--dark-blue);
-    }
-    
-    .promedio-label {
-        color: var(--dark-blue);
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        margin-bottom: 0.6rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.6rem;
-    }
-    
-    /* ===== TABLA DE CALIFICACIONES ===== */
+    /* ===== SECCIÓN DE CALIFICACIONES ===== */
     .calificaciones-section {
         margin-top: 40px;
     }
@@ -651,6 +475,40 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
     
+    /* Calificación final circular (diferente estilo) */
+    .calificacion-final-circle {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1rem;
+        margin: 0 auto;
+        transition: var(--transition);
+        border: 2px solid transparent;
+        background: linear-gradient(135deg, var(--white), var(--subtle-blue));
+        box-shadow: 0 2px 10px rgba(29, 78, 216, 0.1);
+    }
+    
+    .calificacion-final-circle.aprobado {
+        color: var(--success-green);
+        border-color: var(--success-green);
+        background: linear-gradient(135deg, var(--white), #f0fdf4);
+    }
+    
+    .calificacion-final-circle.reprobado {
+        color: var(--error-red);
+        border-color: var(--error-red);
+        background: linear-gradient(135deg, var(--white), #fef2f2);
+    }
+    
+    .calificacion-final-circle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    }
+    
     /* Promedio de materia más pequeño */
     .promedio-materia {
         display: inline-flex;
@@ -693,7 +551,7 @@
         font-size: 1.2rem;
     }
     
-    /* Promedios por parcial compactos */
+    /* Resumen de parciales */
     .parciales-resumen {
         background: var(--white);
         padding: 1.8rem 2.2rem;
@@ -726,6 +584,17 @@
         letter-spacing: 0.7px;
     }
     
+    /* Calificación Final Destacada */
+    .cal-final-destacada {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--dark-blue);
+        background: linear-gradient(135deg, var(--subtle-blue), var(--pale-blue));
+        padding: 0.4rem 0.8rem;
+        border-radius: 10px;
+        border: 2px solid var(--primary-blue);
+    }
+    
     /* Footer compacto */
     .dashboard-footer {
         margin-top: 4rem;
@@ -755,13 +624,15 @@
     }
     
     /* ===== RESPONSIVE ===== */
+    @media (max-width: 1600px) {
+        .main-container {
+            max-width: 95%;
+        }
+    }
+    
     @media (max-width: 1200px) {
         .main-container {
             padding: 70px 30px 40px;
-        }
-        
-        .promedio-value {
-            font-size: 2.6rem;
         }
         
         .student-profile-compact {
@@ -784,10 +655,6 @@
         
         .student-details-grid {
             grid-template-columns: repeat(3, 1fr);
-        }
-        
-        .promedio-value {
-            font-size: 2.4rem;
         }
         
         .student-name-large {
@@ -844,16 +711,6 @@
             padding: 15px;
         }
         
-        .promedio-value {
-            font-size: 2.2rem;
-        }
-        
-        .promedio-icon {
-            width: 55px;
-            height: 55px;
-            font-size: 1.5rem;
-        }
-        
         .detail-card {
             padding: 1.2rem 0.9rem;
             min-height: 110px;
@@ -877,19 +734,17 @@
         .calificaciones-table th,
         .calificaciones-table td {
             padding: 1rem 1.2rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Hacer la tabla responsive en móviles */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
     }
     
     @media (max-width: 576px) {
-        .promedio-value {
-            font-size: 2rem;
-        }
-        
-        .promedio-card {
-            padding: 1.5rem 1.2rem;
-            min-height: 160px;
-        }
-        
         .student-name-large {
             font-size: 1.5rem;
         }
@@ -920,12 +775,6 @@
             font-size: 1.1rem;
         }
         
-        .promedio-icon {
-            width: 50px;
-            height: 50px;
-            font-size: 1.4rem;
-        }
-        
         .detail-card-icon {
             width: 40px;
             height: 40px;
@@ -934,6 +783,13 @@
         
         .logout-btn {
             padding: 0.7rem 1.2rem;
+            font-size: 0.9rem;
+        }
+        
+        .calificacion-circle,
+        .calificacion-final-circle {
+            width: 45px;
+            height: 45px;
             font-size: 0.9rem;
         }
     }
@@ -974,11 +830,6 @@
                         <div class="student-details-grid">
                             <!-- Tarjeta de Matrícula -->
                             <div class="detail-card">
-                                <div class="floating-dots">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
                                 <div class="detail-card-icon">
                                     <i class="bi bi-person-badge"></i>
                                 </div>
@@ -990,11 +841,6 @@
                             
                             <!-- Tarjeta de Semestre -->
                             <div class="detail-card">
-                                <div class="floating-dots">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
                                 <div class="detail-card-icon">
                                     <i class="bi bi-calendar3"></i>
                                 </div>
@@ -1006,11 +852,6 @@
                             
                             <!-- Tarjeta de Grupo -->
                             <div class="detail-card">
-                                <div class="floating-dots">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
                                 <div class="detail-card-icon">
                                     <i class="bi bi-people-fill"></i>
                                 </div>
@@ -1026,60 +867,13 @@
         </div>
     </section>
     
-    <!-- ===== SECCIÓN DE PROMEDIOS ===== -->
-    <section class="promedios-section">
-        <div class="row g-4">
-            <!-- Promedio Parciales -->
-            <div class="col-lg-4 col-md-12">
-                <div class="promedio-card">
-                    <div class="promedio-icon">
-                        <i class="bi bi-calculator"></i>
-                    </div>
-                    <div class="promedio-label">
-                        <i class="bi bi-graph-up"></i>
-                        Promedio Parciales
-                    </div>
-                    <div class="promedio-value">{{ promedio_parciales|floatformat:1 }}</div>
-                </div>
-            </div>
-            
-            <!-- Promedio Global -->
-            <div class="col-lg-4 col-md-6">
-                <div class="promedio-card">
-                    <div class="promedio-icon">
-                        <i class="bi bi-person-check"></i>
-                    </div>
-                    <div class="promedio-label">
-                        <i class="bi bi-pencil-square"></i>
-                        Examen Final
-                    </div>
-                    <div class="promedio-value">{{ examen_final|floatformat:1 }}</div>
-                </div>
-            </div>
-            
-            <!-- Promedio Final -->
-            <div class="col-lg-4 col-md-6">
-                <div class="promedio-card final-card">
-                    <div class="promedio-icon">
-                        <i class="bi bi-star-fill"></i>
-                    </div>
-                    <div class="promedio-label">
-                        <i class="bi bi-award"></i>
-                        Promedio Final
-                    </div>
-                    <div class="promedio-value">{{ promedio_final|floatformat:1 }}</div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
     <!-- ===== SECCIÓN DE CALIFICACIONES ===== -->
     <section class="calificaciones-section">
         <div class="calificaciones-card">
             <div class="calificaciones-header">
                 <h3>
                     <i class="bi bi-table"></i>
-                    Calificaciones por Parcial
+                    Calificaciones por Materia
                 </h3>
             </div>
             
@@ -1093,7 +887,9 @@
                                 <th class="text-center">1er Parcial</th>
                                 <th class="text-center">2do Parcial</th>
                                 <th class="text-center">3er Parcial</th>
-                                <th class="text-center pe-4">Promedio</th>
+                                <th class="text-center">Promedio Parciales</th>
+                                <th class="text-center">Examen Final</th>
+                                <th class="text-center pe-4">Calificación Final</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1150,24 +946,52 @@
                                     {% endif %}
                                 </td>
                                 
-                                <!-- Promedio de la materia -->
-                                <td class="text-center pe-4">
+                                <!-- Promedio de Parciales -->
+                                <td class="text-center">
+                                    {% if materia.promedio_parciales > 0 %}
                                     <div class="d-flex flex-column align-items-center">
-                                        {% if materia.codigo == 'C1301' %}
+                                        <span class="promedio-materia 
+                                            {% if materia.promedio_parciales >= 6 %}aprobado{% else %}reprobado{% endif %}">
+                                            {{ materia.promedio_parciales }}
+                                        </span>
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted" style="font-size: 0.9rem;">-</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <!-- Examen Final -->
+                                <td class="text-center">
+                                    {% if materia.examen_final and materia.examen_final > 0 %}
+                                    <div class="calificacion-circle 
+                                        {% if materia.examen_final >= 6 %}aprobado{% else %}reprobado{% endif %}">
+                                        {{ materia.examen_final }}
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted" style="font-size: 0.9rem;">-</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <!-- Calificación Final -->
+                                <td class="text-center pe-4">
+                                    {% if materia.codigo == 'C1301' %}
+                                    <!-- Materia especial con calificación letra -->
+                                    <div class="d-flex flex-column align-items-center">
                                         <span class="promedio-materia letra">
                                             A
                                         </span>
-                                        <small class="text-muted mt-1">Calificación</small>
-                                        {% elif materia.promedio > 0 %}
-                                        <span class="promedio-materia 
-                                            {% if materia.promedio >= 6 %}aprobado{% else %}reprobado{% endif %}">
-                                            {{ materia.promedio }}
-                                        </span>
-                                        <small class="text-muted mt-1">/10.0</small>
-                                        {% else %}
-                                        <span class="text-muted" style="font-size: 0.9rem;">-</span>
-                                        {% endif %}
                                     </div>
+                                    {% elif materia.calificacion_final %}
+                                    <!-- Calificación final normal -->
+                                    <div class="d-flex flex-column align-items-center">
+                                        <div class="calificacion-final-circle 
+                                            {% if materia.calificacion_final >= 6 %}aprobado{% else %}reprobado{% endif %}">
+                                            {{ materia.calificacion_final }}
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted" style="font-size: 0.9rem;">-</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -1175,28 +999,14 @@
                     </table>
                 </div>
                 
-                <!-- Promedios por parcial -->
+                <!-- Resumen de promedios -->
                 <div class="parciales-resumen">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="parcial-item">
-                                <div class="parcial-value">{{ promedio_p1 }}</div>
-                                <div class="parcial-label">Prom. 1er Parcial</div>
+                    <div class="col-md-3">
+                        <div class="parcial-item">
+                            <div class="parcial-value cal-final-destacada">
+                                {{ promedio_final|floatformat:1 }}
                             </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <div class="parcial-item">
-                                <div class="parcial-value">{{ promedio_p2 }}</div>
-                                <div class="parcial-label">Prom. 2do Parcial</div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <div class="parcial-item">
-                                <div class="parcial-value">{{ promedio_p3 }}</div>
-                                <div class="parcial-label">Prom. 3er Parcial</div>
-                            </div>
+                            <div class="parcial-label">Promedio Final</div>
                         </div>
                     </div>
                 </div>
@@ -1248,7 +1058,7 @@
         });
         
         // Efecto hover en las calificaciones circulares
-        document.querySelectorAll('.calificacion-circle').forEach(circle => {
+        document.querySelectorAll('.calificacion-circle, .calificacion-final-circle').forEach(circle => {
             circle.addEventListener('mouseenter', function() {
                 this.style.transform = 'scale(1.08)';
             });
@@ -1269,22 +1079,8 @@
             });
         });
         
-        // Animaciones de entrada escalonadas para tarjetas
-        document.querySelectorAll('.detail-card').forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.08}s`;
-            card.style.animation = 'fadeInUp 0.4s ease-out forwards';
-            card.style.opacity = '0';
-        });
-        
-        // Animaciones para promedios
-        document.querySelectorAll('.promedio-card').forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.1 + 0.2}s`;
-            card.style.animation = 'fadeInUp 0.4s ease-out forwards';
-            card.style.opacity = '0';
-        });
-        
         // Añadir tooltips a las calificaciones
-        document.querySelectorAll('.calificacion-circle').forEach(circle => {
+        document.querySelectorAll('.calificacion-circle, .calificacion-final-circle').forEach(circle => {
             const score = circle.textContent.trim();
             const aprobado = circle.classList.contains('aprobado');
             const reprobado = circle.classList.contains('reprobado');
@@ -1318,59 +1114,6 @@
                 item.setAttribute('data-bs-toggle', 'tooltip');
             }
         });
-        
-        // Añadir estilos de animación adicionales
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
-            
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(15px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            
-            /* Animación sutil para el botón de logout */
-            @keyframes slideInRight {
-                from {
-                    opacity: 0;
-                    transform: translateX(-15px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-            }
-            
-            /* Aplicar animaciones iniciales */
-            .student-logo-sidebar {
-                animation: slideInRight 0.5s ease-out 0.1s forwards;
-                opacity: 0;
-            }
-            
-            .student-card {
-                animation: fadeIn 0.5s ease-out 0.1s forwards;
-                opacity: 0;
-            }
-            
-            .calificaciones-card {
-                animation: fadeIn 0.5s ease-out 0.4s forwards;
-                opacity: 0;
-            }
-        `;
-        document.head.appendChild(style);
         
         // Inicializar tooltips de Bootstrap si están disponibles
         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {

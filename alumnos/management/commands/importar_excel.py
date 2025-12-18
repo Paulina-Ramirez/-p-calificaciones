@@ -1,4 +1,4 @@
-# alumnos/management/commands/importar_excel.py - VERSIÓN MEJORADA
+# alumnos/management/commands/importar_excel.py - VERSIÓN FINAL CORREGIDA
 import pandas as pd
 import os
 import re
@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from alumnos.models import Alumno, Materia, Calificacion
 from django.utils import timezone
 from decimal import Decimal
+import numpy as np
 
 class Command(BaseCommand):
     help = 'Importa datos desde el archivo Excel PRUEBA CALIFICACIONES WEB.xlsx'
@@ -62,15 +63,20 @@ class Command(BaseCommand):
                 primer_semestre_df = pd.read_excel(excel_path, sheet_name='PRIMER SEMESTRE')
                 semestres_df['PRIMERO'] = primer_semestre_df
                 self.stdout.write(f"  Filas cargadas: {len(primer_semestre_df)}")
+                self.stdout.write(f"  Columnas: {len(primer_semestre_df.columns)}")
             
             if semestre_a_importar in ['TERCERO', 'AMBOS']:
                 self.stdout.write("Cargando hoja TERCER SEMESTRE...")
                 tercer_semestre_df = pd.read_excel(excel_path, sheet_name='TERCER SEMESTRE')
                 semestres_df['TERCERO'] = tercer_semestre_df
                 self.stdout.write(f"  Filas cargadas: {len(tercer_semestre_df)}")
+                self.stdout.write(f"  Columnas: {len(tercer_semestre_df.columns)}")
             
             # Procesar cada semestre
             for semestre_nombre, df in semestres_df.items():
+                # Para el tercer semestre, necesitamos limpiar los espacios en los nombres de columna
+                df = self.preparar_dataframe(df, semestre_nombre)
+                
                 if modo_test:
                     self.modo_prueba(df, semestre_nombre, limite)
                 else:
@@ -86,342 +92,332 @@ class Command(BaseCommand):
             import traceback
             self.stdout.write(traceback.format_exc())
     
+    def preparar_dataframe(self, df, semestre_nombre):
+        """Prepara el DataFrame para procesamiento"""
+        # Primero hacer una copia
+        df = df.copy()
+        
+        # Limpiar nombres de columna
+        df.columns = [self.limpiar_nombre_columna(col, semestre_nombre) for col in df.columns]
+        
+        return df
+    
+    def limpiar_nombre_columna(self, col, semestre_nombre):
+        """Limpia un nombre de columna específico"""
+        if pd.isna(col):
+            return ''
+        
+        col_str = str(col).strip()
+        
+        # Para columnas de calificaciones del tercer semestre, eliminar espacios internos
+        if semestre_nombre == 'TERCERO' and re.match(r'^C\d{4}\s+[A-Z]', col_str):
+            # Ejemplo: "C3023 P1" -> "C3023P1"
+            col_str = col_str.replace(' ', '')
+        
+        # Reemplazar múltiples espacios por uno solo
+        col_str = re.sub(r'\s+', ' ', col_str)
+        
+        return col_str
+    
     def modo_prueba(self, df, semestre_nombre, limite):
         """Modo de prueba que solo analiza el archivo"""
-        self.stdout.write(f"\n=== MODO PRUEBA - SEMESTRE {semestre_nombre} ===")
+        self.stdout.write(f"\n{'='*60}")
+        self.stdout.write(f"MODO PRUEBA - SEMESTRE {semestre_nombre}")
+        self.stdout.write(f"{'='*60}")
         
         # Mostrar información general
-        self.stdout.write(f"Total filas en DataFrame: {len(df)}")
-        self.stdout.write(f"Columnas: {len(df.columns)}")
+        self.stdout.write(f"Total filas: {len(df)}")
+        self.stdout.write(f"Total columnas: {len(df.columns)}")
         
-        # Buscar columnas específicas
-        columnas_buscadas = [
-            'MATRÍCULA', 'NOMBRE (S)', 'GRUPO', 'SEXO',
-            'PROM. AL 1er PARCIAL', 'PROM. AL 2° PARCIAL',
-            'PROM. AL 3er PARCIAL', 'PROM. FINAL'
-        ]
+        # Identificar materias
+        materias = self.identificar_materias(df)
+        self.stdout.write(f"\nMaterias identificadas ({len(materias)}):")
+        for materia in sorted(materias):
+            self.stdout.write(f"  {materia}")
         
-        self.stdout.write("\n=== VERIFICACIÓN DE COLUMNAS CLAVE ===")
-        for col_buscada in columnas_buscadas:
-            encontrada = False
-            for col_real in df.columns:
-                if isinstance(col_real, str):
-                    # Buscar coincidencias aproximadas
-                    if col_buscada.replace(' ', '').upper() in col_real.replace(' ', '').upper():
-                        encontrada = True
-                        self.stdout.write(f"  ✓ {col_buscada}: ENCONTRADA como '{col_real}'")
-                        # Mostrar algunos valores de ejemplo
-                        valores = []
-                        for i in range(min(3, len(df))):
-                            val = df.iloc[i][col_real]
-                            if not pd.isna(val):
-                                valores.append(f"{val}")
-                        if valores:
-                            self.stdout.write(f"       Ejemplos: {', '.join(valores)}")
-                        break
-            if not encontrada:
-                self.stdout.write(f"  ✗ {col_buscada}: NO ENCONTRADA")
-        
-        # Mostrar tipos de datos en las primeras filas
-        self.stdout.write("\n=== ANÁLISIS DE TIPOS DE DATOS ===")
+        # Analizar algunas filas de ejemplo
         filas_a_mostrar = min(limite if limite > 0 else 3, len(df))
+        self.stdout.write(f"\nAnalizando {filas_a_mostrar} registros de ejemplo:")
         
         for i in range(filas_a_mostrar):
             row = df.iloc[i]
-            matricula = self.obtener_matricula(row.get('MATRÍCULA'))
+            matricula = self.obtener_valor(row, 'MATRÍCULA')
             
-            if not matricula or matricula.lower() == 'nan':
+            if not matricula:
                 continue
             
-            self.stdout.write(f"\nRegistro {i+1}: {matricula}")
+            matricula_str = self.formatear_matricula(matricula)
             
-            # Mostrar algunos datos clave con sus tipos
-            datos_clave = [
-                ('MATRÍCULA', 'MATRÍCULA'),
-                ('NOMBRE', 'NOMBRE (S)'),
-                ('GRUPO', 'GRUPO'),
-                ('SEXO', 'SEXO')
+            self.stdout.write(f"\n--- Registro #{i+1} ---")
+            self.stdout.write(f"Matrícula: {matricula_str}")
+            self.stdout.write(f"Nombre: {self.obtener_valor(row, 'NOMBRE(S)')}")
+            self.stdout.write(f"Semestre: {self.obtener_valor(row, 'SEMESTRE')}")
+            self.stdout.write(f"Grupo: {self.obtener_valor(row, 'GRUPO')}")
+            self.stdout.write(f"Sexo: {self.obtener_valor(row, 'SEXO')}")
+            
+            # Mostrar promedios generales
+            self.stdout.write("\nPromedios generales:")
+            promedios = [
+                ('PROM. AL 1ER PARCIAL', 'PROM. AL 1ER PARCIAL'),
+                ('PROM. AL 2° PARCIAL', 'PROM. AL 2° PARCIAL'),
+                ('PROM. AL 3ER PARCIAL', 'PROM. AL 3ER PARCIAL'),
+                ('PROM. FINAL', 'PROM. FINAL')
             ]
             
-            for nombre, col in datos_clave:
-                if col in row:
-                    valor = row[col]
-                    tipo = type(valor).__name__
-                    self.stdout.write(f"  {nombre}: {valor} (tipo: {tipo})")
+            for display_name, col_name in promedios:
+                valor = self.obtener_valor(row, col_name)
+                if valor is not None:
+                    self.stdout.write(f"  {display_name}: {valor}")
             
-            # Mostrar algunas calificaciones de ejemplo
-            self.stdout.write("  CALIFICACIONES DE EJEMPLO:")
-            
-            # Buscar algunas columnas de calificación
-            columnas_calif_encontradas = 0
-            for col in df.columns:
-                if isinstance(col, str) and col.startswith('C') and 'P1' in col:
-                    valor = row[col]
-                    if not pd.isna(valor):
-                        tipo = type(valor).__name__
-                        self.stdout.write(f"    {col}: {valor} (tipo: {tipo})")
-                        columnas_calif_encontradas += 1
-                        if columnas_calif_encontradas >= 3:
-                            break
+            # Mostrar calificaciones de 2 materias de ejemplo
+            if materias:
+                self.stdout.write("\nCalificaciones de ejemplo (2 materias):")
+                materias_ejemplo = sorted(materias)[:2]
+                
+                for materia in materias_ejemplo:
+                    self.stdout.write(f"\n  Materia: {materia}")
+                    
+                    # Obtener todas las calificaciones para esta materia
+                    tipos = ['P1', 'P2', 'P3', 'PP', 'EF', 'CF']
+                    for tipo in tipos:
+                        columna = f'{materia}{tipo}'
+                        valor = self.obtener_valor(row, columna)
+                        if valor is not None:
+                            self.stdout.write(f"    {tipo}: {valor}")
     
     def identificar_materias(self, df):
-        """Identifica correctamente los códigos de materia para ambos formatos"""
+        """Identifica los códigos de materia en el DataFrame"""
         materias = set()
         
         for columna in df.columns:
             if isinstance(columna, str) and columna.startswith('C'):
-                # Para primer semestre: C1022P1, C1022P2, etc.
-                # Para tercer semestre: C3023 P1, C3023 P2, etc.
-                
-                # Patrones para extraer el código de materia
-                patrones = [
-                    r'^(C\d{4})P[1-3]$',     # C1022P1
-                    r'^(C\d{4}) P[1-3]$',    # C3023 P1
-                    r'^(C\d{4})PP$',         # C1022PP
-                    r'^(C\d{4}) PP$',        # C3023 PP
-                    r'^(C\d{4})EF$',         # C1022EF
-                    r'^(C\d{4}) EF$',        # C3023 EF
-                    r'^(C\d{4})CF$',         # C1022CF
-                    r'^(C\d{4}) CF$',        # C3023 CF
-                ]
-                
-                for patron in patrones:
-                    match = re.match(patron, columna)
-                    if match:
-                        codigo = match.group(1)
-                        materias.add(codigo)
-                        break
+                # Extraer el código de materia (primeros 5 caracteres: C + 4 dígitos)
+                match = re.match(r'^(C\d{4})', columna)
+                if match:
+                    codigo = match.group(1)
+                    materias.add(codigo)
         
         return materias
     
+    def obtener_valor(self, row, columna_buscada):
+        """Busca un valor en la fila por nombre de columna"""
+        # Primero buscar coincidencia exacta
+        if columna_buscada in row.index:
+            valor = row[columna_buscada]
+            return None if pd.isna(valor) else valor
+        
+        # Si no encuentra, buscar coincidencia insensible a mayúsculas y espacios
+        columna_buscada_norm = columna_buscada.upper().replace(' ', '').replace('(', '').replace(')', '')
+        
+        for col in row.index:
+            if isinstance(col, str):
+                col_norm = col.upper().replace(' ', '').replace('(', '').replace(')', '')
+                if columna_buscada_norm == col_norm:
+                    valor = row[col]
+                    return None if pd.isna(valor) else valor
+        
+        return None
+    
     def procesar_semestre(self, df, semestre_nombre, limite):
         """Procesa un DataFrame de un semestre específico"""
-        self.stdout.write(f'\nProcesando semestre: {semestre_nombre}')
+        self.stdout.write(f'\n{"="*60}')
+        self.stdout.write(f"PROCESANDO SEMESTRE: {semestre_nombre}")
+        self.stdout.write(f"{'='*60}")
         
         # Contadores para estadísticas
-        alumnos_creados = 0
-        alumnos_actualizados = 0
-        materias_creadas = 0
-        calificaciones_creadas = 0
-        calificaciones_actualizadas = 0
+        stats = {
+            'alumnos_creados': 0,
+            'alumnos_actualizados': 0,
+            'materias_creadas': 0,
+            'calificaciones_creadas': 0,
+            'calificaciones_actualizadas': 0,
+            'errores': 0
+        }
         
         # Primero, crear todas las materias del semestre
-        materias_dict = self.crear_materias_desde_dataframe(df)
-        materias_creadas = len(materias_dict)
+        materias_dict = self.crear_materias_desde_dataframe(df, semestre_nombre)
+        stats['materias_creadas'] = len(materias_dict)
         
         # Determinar cuántas filas procesar
         total_filas = len(df)
-        if limite > 0:
-            total_filas = min(limite, total_filas)
+        if limite > 0 and limite < total_filas:
+            total_filas = limite
         
         self.stdout.write(f'Procesando {total_filas} de {len(df)} filas...')
+        self.stdout.write(f'Encontradas {len(materias_dict)} materias')
         
         # Iterar por cada fila (alumno)
         for index in range(total_filas):
             row = df.iloc[index]
             
-            # Saltar filas vacías o sin matrícula
-            matricula_raw = row.get('MATRÍCULA')
-            if pd.isna(matricula_raw) or str(matricula_raw).strip() == '':
-                continue
-            
-            # Crear o actualizar alumno (INCLUYENDO PROMEDIOS)
-            alumno, created = self.crear_o_actualizar_alumno(row, semestre_nombre)
-            
-            if alumno:
+            try:
+                # Saltar filas vacías o sin matrícula
+                matricula = self.obtener_valor(row, 'MATRÍCULA')
+                if not matricula or str(matricula).strip() == '':
+                    continue
+                
+                matricula_str = self.formatear_matricula(matricula)
+                
+                # Mostrar progreso
+                if (index + 1) % 5 == 0:
+                    self.stdout.write(f'  Progreso: {index + 1}/{total_filas} alumnos procesados')
+                
+                # Crear o actualizar alumno
+                alumno, created = self.crear_o_actualizar_alumno(row, semestre_nombre, matricula_str)
+                
+                if not alumno:
+                    stats['errores'] += 1
+                    continue
+                
                 if created:
-                    alumnos_creados += 1
+                    stats['alumnos_creados'] += 1
                 else:
-                    alumnos_actualizados += 1
+                    stats['alumnos_actualizados'] += 1
                 
                 # Para cada materia, crear calificación
                 for codigo_materia, materia_obj in materias_dict.items():
-                    calificacion, calif_created = self.crear_calificacion(row, alumno, materia_obj, semestre_nombre, codigo_materia)
+                    calificacion, calif_created = self.crear_calificacion(
+                        row, alumno, materia_obj, semestre_nombre, codigo_materia
+                    )
+                    
                     if calificacion:
                         if calif_created:
-                            calificaciones_creadas += 1
+                            stats['calificaciones_creadas'] += 1
                         else:
-                            calificaciones_actualizadas += 1
+                            stats['calificaciones_actualizadas'] += 1
             
-            # Mostrar progreso
-            if (index + 1) % 10 == 0:
-                self.stdout.write(f'  Procesados {index + 1} alumnos...')
+            except Exception as e:
+                stats['errores'] += 1
+                self.stdout.write(self.style.ERROR(f'Error en fila {index+1}: {str(e)}'))
         
         # Mostrar estadísticas finales
-        self.stdout.write(self.style.SUCCESS(
-            f'\nESTADÍSTICAS - SEMESTRE {semestre_nombre}:'
-        ))
-        self.stdout.write(f'  Alumnos creados: {alumnos_creados}')
-        self.stdout.write(f'  Alumnos actualizados: {alumnos_actualizados}')
-        self.stdout.write(f'  Materias: {materias_creadas}')
-        self.stdout.write(f'  Calificaciones creadas: {calificaciones_creadas}')
-        self.stdout.write(f'  Calificaciones actualizadas: {calificaciones_actualizadas}')
+        self.stdout.write(f'\n{"="*60}')
+        self.stdout.write(self.style.SUCCESS(f"ESTADÍSTICAS - SEMESTRE {semestre_nombre}"))
+        self.stdout.write(f"{'='*60}")
+        self.stdout.write(f"  ✓ Alumnos creados: {stats['alumnos_creados']}")
+        self.stdout.write(f"  ✓ Alumnos actualizados: {stats['alumnos_actualizados']}")
+        self.stdout.write(f"  ✓ Materias: {stats['materias_creadas']}")
+        self.stdout.write(f"  ✓ Calificaciones creadas: {stats['calificaciones_creadas']}")
+        self.stdout.write(f"  ✓ Calificaciones actualizadas: {stats['calificaciones_actualizadas']}")
+        if stats['errores'] > 0:
+            self.stdout.write(self.style.WARNING(f"  ⚠ Errores: {stats['errores']}"))
+        self.stdout.write(f"{'='*60}")
     
-    def crear_materias_desde_dataframe(self, df):
-        """Identifica y crea las materias a partir del DataFrame"""
-        materias_dict = {}
-        
-        # Primero identificar todos los códigos únicos
-        codigos_materias = self.identificar_materias(df)
-        
-        self.stdout.write(f'Códigos de materia identificados: {len(codigos_materias)}')
-        
-        for codigo in codigos_materias:
-            if codigo not in materias_dict:
-                try:
-                    nombre_materia = self.obtener_nombre_materia(df, codigo)
-                    
-                    materia, created = Materia.objects.get_or_create(
-                        codigo=codigo,
-                        defaults={'nombre': nombre_materia}
-                    )
-                    materias_dict[codigo] = materia
-                    
-                    if created:
-                        self.stdout.write(f'  Materia creada: {codigo} - {nombre_materia}')
-                    else:
-                        self.stdout.write(f'  Materia existente: {codigo}')
-                except Exception as e:
-                    self.stdout.write(self.style.WARNING(f'  Error con materia {codigo}: {str(e)}'))
-        
-        return materias_dict
-    
-    def obtener_nombre_materia(self, df, codigo):
-        """Intenta obtener el nombre de la materia desde las filas inferiores del DataFrame"""
-        # Buscar en las últimas filas (donde normalmente están los nombres)
-        for index in range(len(df)-1, max(len(df)-30, 0), -1):
-            row = df.iloc[index]
-            # Buscar filas sin matrícula (probablemente descripción de materias)
-            if pd.isna(row.get('MATRÍCULA')):
-                # Intentar diferentes formatos de columna
-                posibles_columnas = [codigo, f'{codigo} ', f'{codigo}  ']
-                for col in posibles_columnas:
-                    if col in df.columns:
-                        valor = row.get(col)
-                        if not pd.isna(valor) and str(valor).strip() != '':
-                            nombre = str(valor).strip()
-                            if nombre and nombre.lower() != 'nan':
-                                return nombre
-        
-        return f'Materia {codigo}'
-    
-    def obtener_matricula(self, valor):
-        """Convierte la matrícula a string sin decimales"""
+    def formatear_matricula(self, valor):
+        """Formatea la matrícula correctamente"""
         if pd.isna(valor):
             return ''
         
-        # Si es un número, convertirlo a int primero
-        try:
-            if isinstance(valor, (int, float)):
-                # Remover el .0 si es decimal
-                if float(valor).is_integer():
-                    return str(int(valor))
-                return str(valor)
-        except:
-            pass
+        # Convertir a string y limpiar
+        matricula_str = str(valor).strip()
         
-        return str(valor).strip()
+        # Si tiene decimal .0, removerlo
+        if matricula_str.endswith('.0'):
+            matricula_str = matricula_str[:-2]
+        
+        return matricula_str
     
-    def buscar_columna_aproximada(self, row, posibles_nombres):
-        """Busca una columna por nombre aproximado"""
-        for col in row.index:
-            if isinstance(col, str):
-                for nombre_buscado in posibles_nombres:
-                    # Buscar coincidencia aproximada
-                    if nombre_buscado.replace(' ', '').upper() in col.replace(' ', '').upper():
-                        return col, row[col]
-        return None, None
+    def crear_materias_desde_dataframe(self, df, semestre_nombre):
+        """Identifica y crea las materias a partir del DataFrame"""
+        materias_dict = {}
+        
+        # Identificar todos los códigos únicos
+        codigos_materias = self.identificar_materias(df)
+        
+        self.stdout.write(f'Identificando {len(codigos_materias)} materias...')
+        
+        # Diccionario de nombres de materias
+        nombres_materias = {
+            # Primer semestre
+            'C1022': 'CIENCIAS NATURALES I',
+            'C1081': 'CIENCIAS SOCIALES I',
+            'C1041': 'CULTURA DIGITAL I',
+            'C1061': 'PENSAMIENTO MATEMÁTICO I',
+            'C1072': 'LENGUA Y COMUNICACIÓN I',
+            'C1111': 'LENGUAS INDÍGENAS I',
+            'C1071': 'INGLÉS I',
+            'C1083': 'PENSAMIENTO FILOSÓFICO Y HUMANIDADES I',
+            'C1181': 'LABORATORIO DE INVESTIGACIÓN',
+            'C1131': 'DESARROLLO COMUNITARIO I',
+            'C1301': 'FORMACIÓN SOCIOEMOCIONAL I',
+            # Tercer semestre
+            'C3023': 'CIENCIAS NATURALES III',
+            'C3063': 'PENSAMIENTO MATEMÁTICO III',
+            'C3076': 'LENGUA Y COMUNICACIÓN III',
+            'C3113': 'LENGUAS INDÍGENAS III',
+            'C3075': 'INGLÉS III',
+            'C3085': 'PENSAMIENTO FILOSÓFICO Y HUMANIDADES III',
+            'C3122': 'DESARROLLO COMUNITARIO III',
+            'C3133': 'CULTURA DIGITAL III',
+            'C3231': 'CIENCIAS SOCIALES III',
+            'C3232': 'PROYECTO DE INVESTIGACIÓN',
+            'C3303': 'FORMACIÓN SOCIOEMOCIONAL III',
+        }
+        
+        for codigo in sorted(codigos_materias):
+            try:
+                # Obtener nombre de la materia
+                nombre = nombres_materias.get(codigo, f'Materia {codigo}')
+                
+                # Crear o obtener la materia
+                materia, created = Materia.objects.get_or_create(
+                    codigo=codigo,
+                    defaults={
+                        'nombre': nombre,
+                        'semestre': semestre_nombre
+                    }
+                )
+                
+                materias_dict[codigo] = materia
+                
+                if created:
+                    self.stdout.write(f'  ✓ Materia creada: {codigo} - {nombre}')
+                else:
+                    self.stdout.write(f'  → Materia existente: {codigo}')
+                    
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f'  ✗ Error con materia {codigo}: {str(e)}'))
+        
+        return materias_dict
     
-    def crear_o_actualizar_alumno(self, row, semestre):
-        """Crea o actualiza un alumno a partir de una fila del DataFrame - CORREGIDO"""
+    def crear_o_actualizar_alumno(self, row, semestre, matricula):
+        """Crea o actualiza un alumno a partir de una fila del DataFrame"""
         try:
-            matricula_raw = row.get('MATRÍCULA')
-            matricula = self.obtener_matricula(matricula_raw)
-            
-            if not matricula:
-                return None, False
-            
             # Parsear nombres
-            nombres_completos = str(row.get('NOMBRE (S)', '')).strip()
-            nombres = nombres_completos.split() if nombres_completos else []
+            nombre_completo = self.obtener_valor(row, 'NOMBRE(S)') or ''
+            nombres = str(nombre_completo).split()
             
             primer_nombre = nombres[0] if len(nombres) > 0 else ''
             segundo_nombre = ' '.join(nombres[1:]) if len(nombres) > 1 else ''
             
-            # Determinar el semestre
-            semestre_alumno = str(row.get('SEMESTRE', semestre)).strip()
-            if not semestre_alumno or semestre_alumno.lower() == 'nan':
-                semestre_alumno = semestre
+            # Obtener otros datos
+            grupo = self.obtener_valor(row, 'GRUPO') or ''
+            sexo = self.obtener_valor(row, 'SEXO') or ''
             
-            # Grupo (convertir a string)
-            grupo_raw = row.get('GRUPO', '')
-            if pd.isna(grupo_raw):
-                grupo = ''
-            else:
-                grupo = str(grupo_raw).strip()
+            # Obtener promedios generales del alumno
+            prom_primer_parcial = self.convertir_a_decimal(self.obtener_valor(row, 'PROM. AL 1ER PARCIAL'))
+            prom_segundo_parcial = self.convertir_a_decimal(self.obtener_valor(row, 'PROM. AL 2° PARCIAL'))
+            prom_tercer_parcial = self.convertir_a_decimal(self.obtener_valor(row, 'PROM. AL 3ER PARCIAL'))
+            examen_final = self.convertir_a_decimal(self.obtener_valor(row, 'PROM. FINAL'))
             
-            # Sexo
-            sexo_raw = row.get('SEXO', '')
-            if pd.isna(sexo_raw):
-                sexo = ''
-            else:
-                sexo = str(sexo_raw).strip().upper()
-                if sexo not in ['H', 'M']:
-                    sexo = ''
-            
-            # ======================= CORREGIDO: OBTENER PROMEDIOS =======================
-            
-            # Leer los promedios de parciales del Excel
-            prom_primer_parcial = self.obtener_promedio(row, 'PROM. AL 1ER PARCIAL')
-            prom_segundo_parcial = self.obtener_promedio(row, 'PROM. AL 2° PARCIAL')
-            prom_tercer_parcial = self.obtener_promedio(row, 'PROM. AL 3ER PARCIAL')
-            
-            # Leer examen final (PROM. FINAL en el Excel)
-            examen_final = self.obtener_promedio(row, 'PROM. FINAL')
-            
-            # Calcular promedio final (si tenemos todos los datos)
+            # Calcular promedio final si tenemos todos los datos
             prom_final_calculado = None
-            if (prom_primer_parcial is not None and 
-                prom_segundo_parcial is not None and 
-                prom_tercer_parcial is not None and 
-                examen_final is not None):
-                
-                # CALCULAR PROMEDIO FINAL SEGÚN TU FÓRMULA
-                # Aquí puedes ajustar la fórmula según tu sistema
-                
-                # Opción 1: Promedio simple de los tres parciales + examen
-                prom_parciales = (float(prom_primer_parcial) + 
-                                 float(prom_segundo_parcial) + 
-                                 float(prom_tercer_parcial)) / 3
-                
-                # Opción 2: 70% parciales + 30% examen (ajusta los porcentajes)
-                # prom_final_calculado = (prom_parciales * 0.7) + (float(examen_final) * 0.3)
-                
-                # Opción 3: 60% parciales + 40% examen
-                # prom_final_calculado = (prom_parciales * 0.6) + (float(examen_final) * 0.4)
-                
-                # Opción 4: Promedio directo (50% parciales + 50% examen)
-                prom_final_calculado = (prom_parciales + float(examen_final)) / 2
-                
-                # Redondear a 1 decimal
+            if all(x is not None for x in [prom_primer_parcial, prom_segundo_parcial, prom_tercer_parcial, examen_final]):
+                prom_parciales = (prom_primer_parcial + prom_segundo_parcial + prom_tercer_parcial) / 3
+                prom_final_calculado = (prom_parciales + examen_final) / 2
                 prom_final_calculado = round(prom_final_calculado, 1)
-            
-            # Mostrar para debug
-            self.stdout.write(f"  Matrícula {matricula}:")
-            self.stdout.write(f"    P1={prom_primer_parcial}, P2={prom_segundo_parcial}, P3={prom_tercer_parcial}")
-            self.stdout.write(f"    Examen Final={examen_final}, Prom. Calculado={prom_final_calculado}")
             
             # Crear o actualizar alumno
             alumno, created = Alumno.objects.update_or_create(
                 matricula=matricula,
                 defaults={
-                    'primer_apellido': str(row.get('PRIMER APELLIDO', '')).strip(),
-                    'segundo_apellido': str(row.get('SEGUNDO APELLIDO', '')).strip(),
+                    'primer_apellido': self.obtener_valor(row, 'PRIMER APELLIDO') or '',
+                    'segundo_apellido': self.obtener_valor(row, 'SEGUNDO APELLIDO') or '',
                     'primer_nombre': primer_nombre,
                     'segundo_nombre': segundo_nombre,
-                    'semestre': semestre_alumno,
-                    'grupo': grupo,
-                    'sexo': sexo,
+                    'semestre': semestre,
+                    'grupo': str(grupo).strip(),
+                    'sexo': str(sexo).strip().upper(),
                     'prom_primer_parcial': prom_primer_parcial,
                     'prom_segundo_parcial': prom_segundo_parcial,
                     'prom_tercer_parcial': prom_tercer_parcial,
@@ -430,178 +426,103 @@ class Command(BaseCommand):
                     'activo': True,
                 }
             )
-
+            
             return alumno, created
             
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f'Error al crear alumno {matricula}: {str(e)}'))
-            import traceback
-            traceback.print_exc()
+            self.stdout.write(self.style.ERROR(f'  ✗ Error al crear alumno {matricula}: {str(e)}'))
             return None, False
-        
-    def obtener_promedio(self, row, nombre_columna):
-        """Busca y convierte un promedio específico"""
-        for col in row.index:
-            if isinstance(col, str):
-                # Buscar coincidencia aproximada
-                if nombre_columna.replace(' ', '').upper() in col.replace(' ', '').upper():
-                    valor = row[col]
-                    return self.convertir_a_decimal(valor)
-        return None
     
     def crear_calificacion(self, row, alumno, materia, semestre, codigo_materia):
-        """Crea una calificación para un alumno en una materia específica - MEJORADO"""
+        """Crea una calificación para un alumno en una materia específica"""
         try:
-            # Intentar diferentes formatos de nombres de columna
-            # Para primer semestre: C1022P1, C1022P2, C1022P3, C1022PP, C1022EF, C1022CF
-            # Para tercer semestre: C3023 P1, C3023 P2, C3023 P3, C3023 PP, C3023 EF, C3023 CF
+            # Buscar todas las calificaciones para esta materia
+            valores = {
+                'p1': self.obtener_calificacion_por_materia(row, codigo_materia, 'P1'),
+                'p2': self.obtener_calificacion_por_materia(row, codigo_materia, 'P2'),
+                'p3': self.obtener_calificacion_por_materia(row, codigo_materia, 'P3'),
+                'pp': self.obtener_calificacion_por_materia(row, codigo_materia, 'PP'),
+                'ef': self.obtener_calificacion_por_materia(row, codigo_materia, 'EF'),
+                'cf': self.obtener_calificacion_por_materia(row, codigo_materia, 'CF'),
+            }
             
-            posibles_formatos = [
-                # Sin espacio (primer semestre)
-                (f'{codigo_materia}P1', 'p1'),
-                (f'{codigo_materia}P2', 'p2'),
-                (f'{codigo_materia}P3', 'p3'),
-                (f'{codigo_materia}PP', 'pp'),  # Promedio parcial
-                (f'{codigo_materia}EF', 'ef'),  # Examen final
-                (f'{codigo_materia}CF', 'cf'),  # Calificación final
-                # Con espacio (tercer semestre)
-                (f'{codigo_materia} P1', 'p1'),
-                (f'{codigo_materia} P2', 'p2'),
-                (f'{codigo_materia} P3', 'p3'),
-                (f'{codigo_materia} PP', 'pp'),
-                (f'{codigo_materia} EF', 'ef'),
-                (f'{codigo_materia} CF', 'cf'),
-            ]
+            # Verificar si hay datos para esta materia
+            tiene_datos = any(v is not None for v in valores.values())
             
-            valores = {}
-            
-            for columna, tipo in posibles_formatos:
-                if columna in row.index:
-                    if tipo in ['p1', 'p2', 'p3']:
-                        # Para parciales: convertir a entero
-                        valores[tipo] = self.convertir_a_entero(row[columna])
-                    else:
-                        # Para promedios y calificaciones finales: convertir a decimal
-                        valores[tipo] = self.convertir_a_decimal(row[columna], es_promedio=(tipo in ['pp', 'cf']))
-            
-            # Verificar si hay algún dato
-            tiene_datos = any(val is not None for val in valores.values())
-            
-            if tiene_datos:
-                # Mostrar datos para debug
-                self.stdout.write(f"    Materia {codigo_materia}: P1={valores.get('p1')}, P2={valores.get('p2')}, P3={valores.get('p3')}, PP={valores.get('pp')}, CF={valores.get('cf')}")
-                
-                calificacion, created = Calificacion.objects.update_or_create(
-                    alumno=alumno,
-                    materia=materia,
-                    semestre=semestre,
-                    defaults={
-                        'p1': valores.get('p1'),
-                        'p2': valores.get('p2'),
-                        'p3': valores.get('p3'),
-                        'promedio_semestral': valores.get('pp'),
-                        'calificacion_final': valores.get('cf'),
-                    }
-                )
-                
-                return calificacion, created
-            else:
-                # No hay datos para esta materia
+            if not tiene_datos:
                 return None, False
-        
+            
+            # Crear o actualizar calificación
+            calificacion, created = Calificacion.objects.update_or_create(
+                alumno=alumno,
+                materia=materia,
+                semestre=semestre,
+                defaults={
+                    'p1': valores['p1'],
+                    'p2': valores['p2'],
+                    'p3': valores['p3'],
+                    'promedio_semestral': valores['pp'],
+                    'examen_final': valores['ef'],
+                    'calificacion_final': valores['cf'],
+                }
+            )
+            
+            return calificacion, created
+            
         except Exception as e:
-            self.stdout.write(self.style.WARNING(f'Error calificación {codigo_materia} para {alumno.matricula}: {str(e)}'))
+            # Silenciar errores de materias sin datos
             return None, False
     
+    def obtener_calificacion_por_materia(self, row, codigo_materia, tipo):
+        """Obtiene una calificación específica para una materia"""
+        # Construir el nombre de columna
+        nombre_columna = f'{codigo_materia}{tipo}'
+        
+        valor = self.obtener_valor(row, nombre_columna)
+        if valor is None:
+            return None
+        
+        if tipo in ['P1', 'P2', 'P3']:
+            return self.convertir_a_entero(valor)
+        else:
+            return self.convertir_a_decimal(valor)
+    
     def convertir_a_entero(self, valor):
-        """Convierte un valor a entero, manejando casos especiales"""
+        """Convierte un valor a entero"""
         if pd.isna(valor):
             return None
         
-        valor_str = str(valor).strip()
-        
-        if valor_str in ['', '/', 'NA', 'N/A', 'nan', 'NaN', '-']:
-            return None
-        
         try:
-            # Reemplazar comas por puntos si es necesario
-            valor_str = valor_str.replace(',', '.')
+            # Si es string, limpiar
+            if isinstance(valor, str):
+                valor = valor.strip()
+                if valor == '':
+                    return None
             
-            # Si parece ser una fórmula de Excel, intentar extraer el valor
-            if valor_str.startswith('='):
-                import re
-                # Buscar números en la fórmula
-                numeros = re.findall(r'\b\d+\b', valor_str)
-                if numeros:
-                    return int(float(numeros[-1]))
-            
-            # Intentar convertir a float primero y luego a int
-            valor_float = float(valor_str)
-            
-            # Redondear al entero más cercano
+            # Convertir a float y luego a int
+            valor_float = float(valor)
             return int(round(valor_float))
             
         except (ValueError, TypeError):
-            try:
-                # Intentar extraer solo dígitos
-                import re
-                numeros = re.findall(r'\d+', valor_str)
-                if numeros:
-                    return int(numeros[0])
-                return None
-            except:
-                return None
+            return None
     
-    def convertir_a_decimal(self, valor, es_promedio=False):
-        """Convierte un valor a Decimal, manejando casos especiales"""
+    def convertir_a_decimal(self, valor):
+        """Convierte un valor a Decimal"""
         if pd.isna(valor):
             return None
         
-        valor_str = str(valor).strip()
-        
-        if valor_str in ['', '/', 'NA', 'N/A', 'nan', 'NaN', '-']:
-            return None
-        
         try:
-            # Reemplazar comas por puntos si es necesario
-            valor_str = valor_str.replace(',', '.')
+            # Si es string, limpiar
+            if isinstance(valor, str):
+                valor = valor.strip()
+                if valor == '':
+                    return None
+                # Reemplazar comas por puntos
+                valor = valor.replace(',', '.')
             
-            # Si parece ser una fórmula de Excel, intentar extraer el valor
-            if valor_str.startswith('='):
-                import re
-                # Buscar números decimales en la fórmula
-                numeros = re.findall(r'\d+\.?\d*', valor_str)
-                if numeros:
-                    # Para promedios, mantener un decimal; para otros, redondear a 1 decimal
-                    valor_float = float(numeros[-1])
-                    if es_promedio:
-                        # Para promedios, mantener precisión
-                        return round(valor_float, 2)
-                    else:
-                        return round(valor_float, 1)
+            # Convertir a float y redondear a 1 decimal
+            valor_float = float(valor)
+            return round(valor_float, 1)
             
-            # Intentar convertir a float
-            valor_float = float(valor_str)
-            
-            # Redondear según el tipo
-            if es_promedio:
-                # Para promedios, mantener un decimal
-                return round(valor_float, 2)
-            else:
-                # Para calificaciones, redondear a 1 decimal
-                return round(valor_float, 1)
-                
         except (ValueError, TypeError):
-            try:
-                # Intentar extraer números decimales
-                import re
-                numeros = re.findall(r'\d+\.?\d*', valor_str)
-                if numeros:
-                    valor_float = float(numeros[0])
-                    if es_promedio:
-                        return round(valor_float, 2)
-                    else:
-                        return round(valor_float, 1)
-                return None
-            except:
-                return None
+            return None
