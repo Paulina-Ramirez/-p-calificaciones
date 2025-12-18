@@ -684,6 +684,15 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
     
+    /* Estilo especial para calificación tipo letra */
+    .promedio-materia.letra {
+        color: var(--primary-blue);
+        border-color: var(--primary-blue);
+        background: var(--white);
+        font-weight: 800;
+        font-size: 1.2rem;
+    }
+    
     /* Promedios por parcial compactos */
     .parciales-resumen {
         background: var(--white);
@@ -1098,6 +1107,9 @@
                                         </div>
                                         <div>
                                             <div class="materia-nombre">{{ materia.nombre }}</div>
+                                            {% if materia.codigo == 'C1301' %}
+                                            <small class="text-muted" style="font-size: 0.8rem;">(No promedia)</small>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </td>
@@ -1105,8 +1117,9 @@
                                 <!-- 1er Parcial -->
                                 <td class="text-center">
                                     {% if materia.parcial1 > 0 %}
-                                    <div class="calificacion-circle {% if materia.parcial1 >= 7.0 %}aprobado{% else %}reprobado{% endif %}">
-                                        {{ materia.parcial1|floatformat:1 }}
+                                    <div class="calificacion-circle 
+                                        {% if materia.parcial1 >= 6 %}aprobado{% else %}reprobado{% endif %}">
+                                        {{ materia.parcial1 }}
                                     </div>
                                     {% else %}
                                     <span class="text-muted" style="font-size: 0.9rem;">-</span>
@@ -1116,8 +1129,9 @@
                                 <!-- 2do Parcial -->
                                 <td class="text-center">
                                     {% if materia.parcial2 > 0 %}
-                                    <div class="calificacion-circle {% if materia.parcial2 >= 7.0 %}aprobado{% else %}reprobado{% endif %}">
-                                        {{ materia.parcial2|floatformat:1 }}
+                                    <div class="calificacion-circle 
+                                        {% if materia.parcial2 >= 6 %}aprobado{% else %}reprobado{% endif %}">
+                                        {{ materia.parcial2 }}
                                     </div>
                                     {% else %}
                                     <span class="text-muted" style="font-size: 0.9rem;">-</span>
@@ -1127,8 +1141,9 @@
                                 <!-- 3er Parcial -->
                                 <td class="text-center">
                                     {% if materia.parcial3 > 0 %}
-                                    <div class="calificacion-circle {% if materia.parcial3 >= 7.0 %}aprobado{% else %}reprobado{% endif %}">
-                                        {{ materia.parcial3|floatformat:1 }}
+                                    <div class="calificacion-circle 
+                                        {% if materia.parcial3 >= 6 %}aprobado{% else %}reprobado{% endif %}">
+                                        {{ materia.parcial3 }}
                                     </div>
                                     {% else %}
                                     <span class="text-muted" style="font-size: 0.9rem;">-</span>
@@ -1138,10 +1153,20 @@
                                 <!-- Promedio de la materia -->
                                 <td class="text-center pe-4">
                                     <div class="d-flex flex-column align-items-center">
-                                        <span class="promedio-materia {% if materia.promedio >= 7.0 %}aprobado{% else %}reprobado{% endif %}">
-                                            {{ materia.promedio|floatformat:1 }}
+                                        {% if materia.codigo == 'C1301' %}
+                                        <span class="promedio-materia letra">
+                                            A
+                                        </span>
+                                        <small class="text-muted mt-1">Calificación</small>
+                                        {% elif materia.promedio > 0 %}
+                                        <span class="promedio-materia 
+                                            {% if materia.promedio >= 6 %}aprobado{% else %}reprobado{% endif %}">
+                                            {{ materia.promedio }}
                                         </span>
                                         <small class="text-muted mt-1">/10.0</small>
+                                        {% else %}
+                                        <span class="text-muted" style="font-size: 0.9rem;">-</span>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -1155,21 +1180,21 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="parcial-item">
-                                <div class="parcial-value">{{ promedio_p1|floatformat:1 }}</div>
+                                <div class="parcial-value">{{ promedio_p1 }}</div>
                                 <div class="parcial-label">Prom. 1er Parcial</div>
                             </div>
                         </div>
                         
                         <div class="col-md-4">
                             <div class="parcial-item">
-                                <div class="parcial-value">{{ promedio_p2|floatformat:1 }}</div>
+                                <div class="parcial-value">{{ promedio_p2 }}</div>
                                 <div class="parcial-label">Prom. 2do Parcial</div>
                             </div>
                         </div>
                         
                         <div class="col-md-4">
                             <div class="parcial-item">
-                                <div class="parcial-value">{{ promedio_p3|floatformat:1 }}</div>
+                                <div class="parcial-value">{{ promedio_p3 }}</div>
                                 <div class="parcial-label">Prom. 3er Parcial</div>
                             </div>
                         </div>
@@ -1262,16 +1287,36 @@
         document.querySelectorAll('.calificacion-circle').forEach(circle => {
             const score = circle.textContent.trim();
             const aprobado = circle.classList.contains('aprobado');
+            const reprobado = circle.classList.contains('reprobado');
             
             let tooltipText = `Calificación: ${score}`;
             if (aprobado) {
                 tooltipText += ' (Aprobado)';
-            } else {
+            } else if (reprobado) {
                 tooltipText += ' (No aprobado)';
             }
             
             circle.setAttribute('title', tooltipText);
             circle.setAttribute('data-bs-toggle', 'tooltip');
+        });
+        
+        // Añadir tooltips a los promedios de materia
+        document.querySelectorAll('.promedio-materia').forEach(item => {
+            if (!item.classList.contains('letra')) {
+                const score = item.textContent.trim();
+                const aprobado = item.classList.contains('aprobado');
+                const reprobado = item.classList.contains('reprobado');
+                
+                let tooltipText = `Promedio: ${score}`;
+                if (aprobado) {
+                    tooltipText += ' (Aprobado)';
+                } else if (reprobado) {
+                    tooltipText += ' (No aprobado)';
+                }
+                
+                item.setAttribute('title', tooltipText);
+                item.setAttribute('data-bs-toggle', 'tooltip');
+            }
         });
         
         // Añadir estilos de animación adicionales

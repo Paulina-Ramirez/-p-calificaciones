@@ -1,5 +1,6 @@
-# alumnos/models.py - VERSIÓN SIMPLIFICADA Y FUNCIONAL
+# alumnos/models.py - VERSIÓN MODIFICADA
 from django.db import models
+from decimal import Decimal, ROUND_HALF_UP
 
 class Materia(models.Model):
     codigo = models.CharField(max_length=10, unique=True)
@@ -25,9 +26,9 @@ class Alumno(models.Model):
     fecha_registro = models.DateTimeField(auto_now_add=True)
     activo = models.BooleanField(default=True)
 
-    prom_primer_parcial = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
-    prom_segundo_parcial = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
-    prom_tercer_parcial = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+    prom_primer_parcial = models.IntegerField(null=True, blank=True)
+    prom_segundo_parcial = models.IntegerField(null=True, blank=True)
+    prom_tercer_parcial = models.IntegerField(null=True, blank=True)
     examen_final = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     # Promedio final calculado
     prom_final_calculado = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
@@ -45,6 +46,20 @@ class Alumno(models.Model):
             nombre += f" {self.segundo_apellido}"
         return nombre.strip()
     
+    def redondear_calificacion(self, valor):
+        """Redondea calificaciones: .5 sube, .4 baja"""
+        if valor is None:
+            return None
+        
+        # Convertir a Decimal para mayor precisión
+        decimal_valor = Decimal(str(valor))
+        
+        # Aplicar redondeo: .5 sube, .4 baja
+        # Usamos ROUND_HALF_UP que redondea .5 hacia arriba
+        rounded = decimal_valor.quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        
+        return int(rounded)
+    
     def calcular_promedio_final(self):
         """Calcula el promedio final basado en parciales y examen final"""
         if (self.prom_primer_parcial is not None and 
@@ -52,13 +67,15 @@ class Alumno(models.Model):
             self.prom_tercer_parcial is not None and 
             self.examen_final is not None):
             
-            # Promedio de los tres parciales
-            prom_parciales = (float(self.prom_primer_parcial) + 
-                             float(self.prom_segundo_parcial) + 
-                             float(self.prom_tercer_parcial)) / 3
+            # Redondear parciales (ya deberían estar redondeados)
+            p1 = self.redondear_calificacion(self.prom_primer_parcial) or 0
+            p2 = self.redondear_calificacion(self.prom_segundo_parcial) or 0
+            p3 = self.redondear_calificacion(self.prom_tercer_parcial) or 0
+            
+            # Promedio de los tres parciales (ya redondeados)
+            prom_parciales = (float(p1) + float(p2) + float(p3)) / 3
             
             # Calcular promedio final (70% parciales + 30% examen)
-            # Ajusta esta fórmula según tus necesidades
             prom_final = (prom_parciales * 0.7) + (float(self.examen_final) * 0.3)
             
             self.prom_final_calculado = round(prom_final, 1)
@@ -93,16 +110,43 @@ class Calificacion(models.Model):
     def __str__(self):
         return f"{self.alumno.matricula} - {self.materia.codigo} - {self.semestre}"
     
+    def redondear_calificacion(self, valor):
+        """Redondea calificaciones: .5 sube, .4 baja"""
+        if valor is None:
+            return None
+        
+        # Convertir a Decimal para mayor precisión
+        decimal_valor = Decimal(str(valor))
+        
+        # Aplicar redondeo: .5 sube, .4 baja
+        # Usamos ROUND_HALF_UP que redondea .5 hacia arriba
+        rounded = decimal_valor.quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        
+        return int(rounded)
+    
     @property
     def promedio(self):
         notas = []
+        
+        # Redondear cada calificación antes de promediar
         if self.p1 is not None:
-            notas.append(float(self.p1))
+            p1_redondeado = self.redondear_calificacion(self.p1)
+            if p1_redondeado is not None:
+                notas.append(float(p1_redondeado))
+        
         if self.p2 is not None:
-            notas.append(float(self.p2))
+            p2_redondeado = self.redondear_calificacion(self.p2)
+            if p2_redondeado is not None:
+                notas.append(float(p2_redondeado))
+        
         if self.p3 is not None:
-            notas.append(float(self.p3))
+            p3_redondeado = self.redondear_calificacion(self.p3)
+            if p3_redondeado is not None:
+                notas.append(float(p3_redondeado))
         
         if notas:
-            return round(sum(notas) / len(notas), 1)
+            # Calcular promedio y redondearlo
+            promedio_simple = sum(notas) / len(notas)
+            promedio_redondeado = self.redondear_calificacion(promedio_simple)
+            return promedio_redondeado if promedio_redondeado is not None else 0
         return 0
