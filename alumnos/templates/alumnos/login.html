@@ -715,7 +715,7 @@
         // Formatear matrícula al perder foco
         matriculaInput.addEventListener('blur', function() {
             const value = this.value.trim().replace(/[^\d]/g, '');
-            if (value.length >= 8) {
+            if (value.length >= 2) {
                 // Formato: 2024-001-234
                 const formatted = value.replace(/(\d{4})(\d{3})(\d{3,})/, '$1-$2-$3');
                 if (formatted !== value && formatted.match(/\d{4}-\d{3}-\d{3,}/)) {
@@ -736,7 +736,7 @@
                     return;
                 }
                 
-                if (matricula.length < 8) {
+                if (matricula.length < 2) {
                     e.preventDefault();
                     showError('La matrícula debe tener al menos 8 dígitos');
                     return;
