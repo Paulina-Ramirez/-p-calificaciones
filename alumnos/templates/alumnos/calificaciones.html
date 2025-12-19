@@ -396,7 +396,7 @@
     .calificaciones-table th:hover {
         background: linear-gradient(to bottom, var(--subtle-blue), var(--pale-blue));
     }
-    
+
     .calificaciones-table th:not(:first-child)::after {
         content: '';
         position: absolute;
@@ -1248,14 +1248,19 @@
                                 
                                 <!-- Calificación Final -->
                                 <td class="text-center pe-4">
-                                    {% if materia.codigo == 'C1301' %}
-                                    <!-- Materia especial con calificación letra -->
+                                    {% if materia.es_sin_promedio %}
+                                    <!-- Materias especiales con calificación letra (C1301 y C3303) -->
                                     <div class="d-flex flex-column align-items-center">
                                         <span class="promedio-materia letra">
                                             A
                                         </span>
+                                        <small class="text-muted mt-1" style="font-size: 0.75rem;">
+                                            {% if materia.codigo == 'C1301' %}
+                                            {% elif materia.codigo == 'C3303' %}
+                                            {% endif %}
+                                        </small>
                                     </div>
-                                    {% elif materia.calificacion_final %}
+                                    {% elif materia.calificacion_final > 0 %}
                                     <!-- Calificación final normal -->
                                     <div class="d-flex flex-column align-items-center">
                                         <div class="calificacion-final-circle 
