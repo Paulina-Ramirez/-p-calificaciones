@@ -53,23 +53,23 @@
         z-index: -1;
     }
     
-    /* Header con logo en esquina y nombre a la derecha - MÁS PEQUEÑO */
+    /* Header con logo en esquina y nombre a la derecha - AÚN MÁS PEQUEÑO */
     .header-container {
         position: absolute;
-        top: 25px; /* Reducido de 30px */
-        left: 25px; /* Reducido de 30px */
-        right: 25px; /* Reducido de 30px */
+        top: 20px; /* Más pequeño: de 25px a 20px */
+        left: 20px; /* Más pequeño: de 25px a 20px */
+        right: 20px; /* Más pequeño: de 25px a 20px */
         display: flex;
         align-items: center;
-        gap: 20px; /* Reducido de 25px */
+        gap: 15px; /* Más pequeño: de 20px a 15px */
         z-index: 100;
     }
     
     .logo-corner {
-        width: 140px; /* Reducido de 160px */
-        height: 140px; /* Reducido de 160px */
+        width: 120px; /* Más pequeño: de 140px a 120px */
+        height: 120px; /* Más pequeño: de 140px a 120px */
         object-fit: contain;
-        filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.12)); /* Sombra más sutil */
+        filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.1)); /* Sombra más sutil */
         transition: var(--transition);
         cursor: pointer;
         flex-shrink: 0;
@@ -77,43 +77,43 @@
     
     .logo-corner:hover {
         transform: scale(1.05) rotate(2deg);
-        filter: drop-shadow(0 6px 25px rgba(0, 0, 0, 0.18));
+        filter: drop-shadow(0 5px 20px rgba(0, 0, 0, 0.15));
     }
     
     .institution-header {
         flex: 1;
-        padding-left: 10px;
-        border-left: 3px solid var(--accent-blue);
+        padding-left: 8px; /* Más pequeño: de 10px a 8px */
+        border-left: 2px solid var(--accent-blue); /* Más pequeño: de 3px a 2px */
     }
     
     .institution-header h1 {
-        font-size: 2.2rem; /* Reducido de 2.5rem */
-        font-weight: 700; /* Reducido de 800 */
+        font-size: 1.8rem; /* Más pequeño: de 2.2rem a 1.8rem */
+        font-weight: 700;
         background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 6px; /* Reducido de 8px */
-        letter-spacing: 1.2px; /* Reducido de 1.5px */
+        margin-bottom: 4px; /* Más pequeño: de 6px a 4px */
+        letter-spacing: 1px; /* Más pequeño: de 1.2px a 1px */
         line-height: 1;
     }
     
     .institution-header p {
-        font-size: 1rem; /* Reducido de 1.1rem */
+        font-size: 0.9rem; /* Más pequeño: de 1rem a 0.9rem */
         color: var(--medium-gray);
         font-weight: 500;
-        line-height: 1.4; /* Reducido de 1.5 */
-        letter-spacing: 0.2px; /* Reducido de 0.3px */
-        max-width: 550px; /* Reducido de 600px */
+        line-height: 1.3; /* Más pequeño: de 1.4 a 1.3 */
+        letter-spacing: 0.1px; /* Más pequeño: de 0.2px a 0.1px */
+        max-width: 500px; /* Más pequeño: de 550px a 500px */
     }
     
     .bachillerato-name {
-        font-size: 1.1rem; /* Reducido de 1.3rem */
+        font-size: 0.95rem; /* Más pequeño: de 1.1rem a 0.95rem */
         font-weight: 600;
         color: var(--primary-blue);
-        margin-top: 4px; /* Reducido de 5px */
+        margin-top: 3px; /* Más pequeño: de 4px a 3px */
         font-style: italic;
-        letter-spacing: 0.4px; /* Reducido de 0.5px */
+        letter-spacing: 0.3px; /* Más pequeño: de 0.4px a 0.3px */
     }
     
     /* Contenedor principal - FORMULARIO MÁS ARRIBA Y ANCHO */
@@ -123,7 +123,7 @@
         justify-content: center;
         width: 100%;
         min-height: 100vh;
-        padding-top: 100px; /* MÁS ARRIBA - reducido de 140px a 100px */
+        padding-top: 90px; /* Más arriba: de 100px a 90px */
     }
     
     /* Tarjeta de login - MÁS ANCHA */
@@ -387,31 +387,31 @@
     /* Responsive */
     @media (max-width: 1200px) {
         .header-container {
-            top: 22px; /* Reducido */
-            left: 22px; /* Reducido */
-            right: 22px; /* Reducido */
-            gap: 18px; /* Reducido */
+            top: 18px; /* Más pequeño */
+            left: 18px; /* Más pequeño */
+            right: 18px; /* Más pequeño */
+            gap: 15px; /* Más pequeño */
         }
         
         .logo-corner {
-            width: 130px; /* Reducido */
-            height: 130px; /* Reducido */
+            width: 110px; /* Más pequeño */
+            height: 110px; /* Más pequeño */
         }
         
         .institution-header h1 {
-            font-size: 2rem; /* Reducido */
+            font-size: 1.6rem; /* Más pequeño */
         }
         
         .institution-header p {
-            font-size: 0.95rem; /* Reducido */
+            font-size: 0.85rem; /* Más pequeño */
         }
         
         .bachillerato-name {
-            font-size: 1.05rem; /* Reducido */
+            font-size: 0.9rem; /* Más pequeño */
         }
         
         .login-wrapper {
-            padding-top: 90px; /* Ajustado */
+            padding-top: 85px; /* Ajustado */
         }
         
         .login-card {
@@ -421,31 +421,31 @@
     
     @media (max-width: 992px) {
         .header-container {
-            top: 18px; /* Reducido */
-            left: 18px; /* Reducido */
-            right: 18px; /* Reducido */
-            gap: 14px; /* Reducido */
+            top: 15px; /* Más pequeño */
+            left: 15px; /* Más pequeño */
+            right: 15px; /* Más pequeño */
+            gap: 12px; /* Más pequeño */
         }
         
         .logo-corner {
-            width: 120px; /* Reducido */
-            height: 120px; /* Reducido */
+            width: 100px; /* Más pequeño */
+            height: 100px; /* Más pequeño */
         }
         
         .institution-header h1 {
-            font-size: 1.8rem; /* Reducido */
+            font-size: 1.5rem; /* Más pequeño */
         }
         
         .institution-header p {
-            font-size: 0.9rem; /* Reducido */
+            font-size: 0.8rem; /* Más pequeño */
         }
         
         .bachillerato-name {
-            font-size: 1rem; /* Reducido */
+            font-size: 0.85rem; /* Más pequeño */
         }
         
         .login-wrapper {
-            padding-top: 80px; /* Ajustado */
+            padding-top: 75px; /* Ajustado */
         }
         
         .login-card {
@@ -461,38 +461,38 @@
             right: 0;
             flex-direction: column;
             text-align: center;
-            margin-bottom: 25px; /* Reducido de 30px */
-            gap: 15px; /* Reducido de 20px */
+            margin-bottom: 20px; /* Más pequeño */
+            gap: 12px; /* Más pequeño */
         }
         
         .logo-corner {
-            width: 130px; /* Reducido de 150px */
-            height: 130px; /* Reducido de 150px */
+            width: 110px; /* Más pequeño */
+            height: 110px; /* Más pequeño */
         }
         
         .institution-header {
             padding-left: 0;
             border-left: none;
-            border-top: 2px solid var(--accent-blue); /* Reducido de 3px */
-            padding-top: 12px; /* Reducido de 15px */
+            border-top: 2px solid var(--accent-blue);
+            padding-top: 10px; /* Más pequeño */
         }
         
         .institution-header h1 {
-            font-size: 1.9rem; /* Reducido de 2.2rem */
+            font-size: 1.6rem; /* Más pequeño */
         }
         
         .institution-header p {
-            font-size: 0.95rem; /* Reducido de 1rem */
+            font-size: 0.85rem; /* Más pequeño */
             max-width: 100%;
-            padding: 0 20px;
+            padding: 0 15px; /* Ajustado */
         }
         
         .bachillerato-name {
-            font-size: 1.05rem; /* Reducido de 1.2rem */
+            font-size: 0.9rem; /* Más pequeño */
         }
         
         .login-wrapper {
-            padding-top: 35px; /* Reducido de 40px */
+            padding-top: 30px; /* Ajustado */
             min-height: auto;
         }
         
@@ -521,28 +521,29 @@
     
     @media (max-width: 480px) {
         .header-container {
-            margin-bottom: 15px; /* Reducido de 20px */
+            margin-bottom: 15px; /* Ajustado */
         }
         
         .logo-corner {
-            width: 110px; /* Reducido de 130px */
-            height: 110px; /* Reducido de 130px */
+            width: 90px; /* Más pequeño */
+            height: 90px; /* Más pequeño */
         }
         
         .institution-header h1 {
-            font-size: 1.7rem; /* Reducido de 1.9rem */
+            font-size: 1.4rem; /* Más pequeño */
         }
         
         .institution-header p {
-            font-size: 0.85rem; /* Reducido de 0.9rem */
+            font-size: 0.75rem; /* Más pequeño */
+            padding: 0 10px; /* Ajustado */
         }
         
         .bachillerato-name {
-            font-size: 0.95rem; /* Reducido de 1.1rem */
+            font-size: 0.8rem; /* Más pequeño */
         }
         
         .login-wrapper {
-            padding-top: 25px; /* Reducido de 30px */
+            padding-top: 20px; /* Ajustado */
         }
         
         .form-header {
@@ -577,23 +578,23 @@
     /* Estilos adicionales para pantallas muy grandes */
     @media (min-width: 1600px) {
         .header-container {
-            top: 30px;
-            left: 40px;
-            right: 40px;
+            top: 25px;
+            left: 35px;
+            right: 35px;
         }
         
         .logo-corner {
-            width: 150px; /* Mantenemos un tamaño moderado */
-            height: 150px;
+            width: 130px; /* Tamaño moderado */
+            height: 130px;
         }
         
         .institution-header h1 {
-            font-size: 2.3rem; /* Un poco más grande pero no excesivo */
+            font-size: 2rem; /* Más moderado */
         }
     }
 </style>
 
-<!-- Header con logo en esquina y nombre a la derecha - MÁS PEQUEÑO -->
+<!-- Header con logo en esquina y nombre a la derecha - AÚN MÁS PEQUEÑO -->
 <div class="header-container">
     <img src="{% static 'img/logo-cseio-blanco.png' %}" alt="Logo CSEIO" class="logo-corner">
     
@@ -647,7 +648,7 @@
                 <!-- Botón de acceso -->
                 <button type="submit" class="login-button" id="submitBtn">
                     <i class="bi bi-box-arrow-in-right"></i>
-                    <span>Acceder al Sistema</span>
+                    <span>Ingresar</span>
                 </button>
             </form>
             
@@ -836,7 +837,7 @@
         });
     });
     
-    // Estilos dinámicos
+    // Estilos dinámicos - LIMPIADO EL PROBLEMA DEL NOMBRE DUPLICADO
     const style = document.createElement('style');
     style.textContent = `
         .spinner {
@@ -858,34 +859,12 @@
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
         
-        /* Logo alternativo si no carga */
+        /* Logo alternativo si no carga - CORREGIDO */
         .logo-corner.error {
             display: none;
         }
         
-        .header-container::before {
-            content: 'CSEIO';
-            position: absolute;
-            color: var(--primary-blue);
-            font-weight: 800;
-            font-size: 2.2rem;
-            letter-spacing: 1.5px;
-            display: none;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 140px;
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .logo-corner[src=""] + .institution-header::before,
-        .logo-corner.error + .institution-header::before {
-            display: flex;
-        }
+        /* REMOVIDO el CSS que causaba el duplicado en móvil */
         
         /* Mejoras de accesibilidad */
         @media (prefers-reduced-motion: reduce) {
@@ -905,6 +884,21 @@
             logoImg.onerror = function() {
                 this.classList.add('error');
                 this.src = '';
+                // Si el logo falla, crear un placeholder simple
+                const placeholder = document.createElement('div');
+                placeholder.className = 'logo-placeholder';
+                placeholder.style.width = '120px';
+                placeholder.style.height = '120px';
+                placeholder.style.background = 'linear-gradient(135deg, var(--primary-blue), var(--secondary-blue))';
+                placeholder.style.borderRadius = '10px';
+                placeholder.style.display = 'flex';
+                placeholder.style.alignItems = 'center';
+                placeholder.style.justifyContent = 'center';
+                placeholder.style.color = 'white';
+                placeholder.style.fontWeight = 'bold';
+                placeholder.style.fontSize = '1.5rem';
+                placeholder.textContent = 'CSEIO';
+                this.parentNode.insertBefore(placeholder, this.nextSibling);
             };
         }
     });
