@@ -53,23 +53,23 @@
         z-index: -1;
     }
     
-    /* Header con logo en esquina y nombre a la derecha */
+    /* Header con logo en esquina y nombre a la derecha - MÁS PEQUEÑO */
     .header-container {
         position: absolute;
-        top: 30px;
-        left: 30px;
-        right: 30px;
+        top: 25px; /* Reducido de 30px */
+        left: 25px; /* Reducido de 30px */
+        right: 25px; /* Reducido de 30px */
         display: flex;
         align-items: center;
-        gap: 25px;
+        gap: 20px; /* Reducido de 25px */
         z-index: 100;
     }
     
     .logo-corner {
-        width: 160px;
-        height: 160px;
+        width: 140px; /* Reducido de 160px */
+        height: 140px; /* Reducido de 160px */
         object-fit: contain;
-        filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.15));
+        filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.12)); /* Sombra más sutil */
         transition: var(--transition);
         cursor: pointer;
         flex-shrink: 0;
@@ -77,7 +77,7 @@
     
     .logo-corner:hover {
         transform: scale(1.05) rotate(2deg);
-        filter: drop-shadow(0 6px 30px rgba(0, 0, 0, 0.2));
+        filter: drop-shadow(0 6px 25px rgba(0, 0, 0, 0.18));
     }
     
     .institution-header {
@@ -87,33 +87,33 @@
     }
     
     .institution-header h1 {
-        font-size: 2.5rem;
-        font-weight: 800;
+        font-size: 2.2rem; /* Reducido de 2.5rem */
+        font-weight: 700; /* Reducido de 800 */
         background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 8px;
-        letter-spacing: 1.5px;
+        margin-bottom: 6px; /* Reducido de 8px */
+        letter-spacing: 1.2px; /* Reducido de 1.5px */
         line-height: 1;
     }
     
     .institution-header p {
-        font-size: 1.1rem;
+        font-size: 1rem; /* Reducido de 1.1rem */
         color: var(--medium-gray);
         font-weight: 500;
-        line-height: 1.5;
-        letter-spacing: 0.3px;
-        max-width: 600px;
+        line-height: 1.4; /* Reducido de 1.5 */
+        letter-spacing: 0.2px; /* Reducido de 0.3px */
+        max-width: 550px; /* Reducido de 600px */
     }
     
     .bachillerato-name {
-        font-size: 1.3rem;
+        font-size: 1.1rem; /* Reducido de 1.3rem */
         font-weight: 600;
         color: var(--primary-blue);
-        margin-top: 5px;
+        margin-top: 4px; /* Reducido de 5px */
         font-style: italic;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px; /* Reducido de 0.5px */
     }
     
     /* Contenedor principal - FORMULARIO MÁS ARRIBA Y ANCHO */
@@ -387,27 +387,27 @@
     /* Responsive */
     @media (max-width: 1200px) {
         .header-container {
-            top: 25px;
-            left: 25px;
-            right: 25px;
-            gap: 20px;
+            top: 22px; /* Reducido */
+            left: 22px; /* Reducido */
+            right: 22px; /* Reducido */
+            gap: 18px; /* Reducido */
         }
         
         .logo-corner {
-            width: 150px;
-            height: 150px;
+            width: 130px; /* Reducido */
+            height: 130px; /* Reducido */
         }
         
         .institution-header h1 {
-            font-size: 2.2rem;
+            font-size: 2rem; /* Reducido */
         }
         
         .institution-header p {
-            font-size: 1rem;
+            font-size: 0.95rem; /* Reducido */
         }
         
         .bachillerato-name {
-            font-size: 1.2rem;
+            font-size: 1.05rem; /* Reducido */
         }
         
         .login-wrapper {
@@ -421,27 +421,27 @@
     
     @media (max-width: 992px) {
         .header-container {
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            gap: 15px;
+            top: 18px; /* Reducido */
+            left: 18px; /* Reducido */
+            right: 18px; /* Reducido */
+            gap: 14px; /* Reducido */
         }
         
         .logo-corner {
-            width: 140px;
-            height: 140px;
+            width: 120px; /* Reducido */
+            height: 120px; /* Reducido */
         }
         
         .institution-header h1 {
-            font-size: 2rem;
+            font-size: 1.8rem; /* Reducido */
         }
         
         .institution-header p {
-            font-size: 0.95rem;
+            font-size: 0.9rem; /* Reducido */
         }
         
         .bachillerato-name {
-            font-size: 1.1rem;
+            font-size: 1rem; /* Reducido */
         }
         
         .login-wrapper {
@@ -461,38 +461,38 @@
             right: 0;
             flex-direction: column;
             text-align: center;
-            margin-bottom: 30px;
-            gap: 20px;
+            margin-bottom: 25px; /* Reducido de 30px */
+            gap: 15px; /* Reducido de 20px */
         }
         
         .logo-corner {
-            width: 150px;
-            height: 150px;
+            width: 130px; /* Reducido de 150px */
+            height: 130px; /* Reducido de 150px */
         }
         
         .institution-header {
             padding-left: 0;
             border-left: none;
-            border-top: 3px solid var(--accent-blue);
-            padding-top: 15px;
+            border-top: 2px solid var(--accent-blue); /* Reducido de 3px */
+            padding-top: 12px; /* Reducido de 15px */
         }
         
         .institution-header h1 {
-            font-size: 2.2rem;
+            font-size: 1.9rem; /* Reducido de 2.2rem */
         }
         
         .institution-header p {
-            font-size: 1rem;
+            font-size: 0.95rem; /* Reducido de 1rem */
             max-width: 100%;
             padding: 0 20px;
         }
         
         .bachillerato-name {
-            font-size: 1.2rem;
+            font-size: 1.05rem; /* Reducido de 1.2rem */
         }
         
         .login-wrapper {
-            padding-top: 40px;
+            padding-top: 35px; /* Reducido de 40px */
             min-height: auto;
         }
         
@@ -521,28 +521,28 @@
     
     @media (max-width: 480px) {
         .header-container {
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Reducido de 20px */
         }
         
         .logo-corner {
-            width: 130px;
-            height: 130px;
+            width: 110px; /* Reducido de 130px */
+            height: 110px; /* Reducido de 130px */
         }
         
         .institution-header h1 {
-            font-size: 1.9rem;
+            font-size: 1.7rem; /* Reducido de 1.9rem */
         }
         
         .institution-header p {
-            font-size: 0.9rem;
+            font-size: 0.85rem; /* Reducido de 0.9rem */
         }
         
         .bachillerato-name {
-            font-size: 1.1rem;
+            font-size: 0.95rem; /* Reducido de 1.1rem */
         }
         
         .login-wrapper {
-            padding-top: 30px;
+            padding-top: 25px; /* Reducido de 30px */
         }
         
         .form-header {
@@ -573,14 +573,32 @@
             font-size: 1.05rem;
         }
     }
+    
+    /* Estilos adicionales para pantallas muy grandes */
+    @media (min-width: 1600px) {
+        .header-container {
+            top: 30px;
+            left: 40px;
+            right: 40px;
+        }
+        
+        .logo-corner {
+            width: 150px; /* Mantenemos un tamaño moderado */
+            height: 150px;
+        }
+        
+        .institution-header h1 {
+            font-size: 2.3rem; /* Un poco más grande pero no excesivo */
+        }
+    }
 </style>
 
-<!-- Header con logo en esquina y nombre a la derecha -->
+<!-- Header con logo en esquina y nombre a la derecha - MÁS PEQUEÑO -->
 <div class="header-container">
     <img src="{% static 'img/logo-cseio-blanco.png' %}" alt="Logo CSEIO" class="logo-corner">
     
     <div class="institution-header">
-        <h1>CSEIO</h1>
+        <h1>CSEIIO</h1>
         <p>Colegio Superior para la Educación Integral Intercultural de Oaxaca</p>
         <div class="bachillerato-name">BACHILLERATO NGU NIYA YANU ZACU KJUABITSIEN</div>
     </div>
@@ -640,7 +658,7 @@
                     <span>Sistema académico seguro y confidencial</span>
                 </div>
                 <div class="copyright">
-                    © {% now "Y" %} Colegio Superior CSEIO - Plataforma Académica
+                    © {% now "Y" %} Colegio Superior CSEIIO - Plataforma Académica
                 </div>
             </div>
         </div>
@@ -857,8 +875,8 @@
             left: 0;
             top: 50%;
             transform: translateY(-50%);
-            width: 160px;
-            height: 160px;
+            width: 140px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
